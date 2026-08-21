@@ -14,6 +14,12 @@ struct Database {
     vectors: HashMap<String, Vector>,
 }
 
+enum RecallError{
+    DimensionMismatch{
+        query: usize,
+        stored: usize
+    }
+}
 impl Database {
     fn new() -> Database {
         Database {
@@ -29,22 +35,34 @@ impl Database {
         self.vectors.get(id)
     }
 
-    fn search(&self, query: &[f32]) -> Vec<SearchResult> {
+    fn search(&self, query: &[f32], top_k: usize) -> Result<Vec<SearchResult>, RecallError> {
         let mut results = Vec::new();
 
         for vector in self.vectors.values() {
-            let score = cosine_similarity(query, &vector.values);
+            let score = cosine_similarity(query, &vector.values)?;
 
             results.push(SearchResult {
                 id: vector.id.clone(),
-                score,
+                score
             });
         }
-        results
+        results.sort_by(|a,b| {
+            b.score.partial_cmp(&a.score).unwrap()
+        });
+
+        results.truncate(top_k);
+
+        Ok(results)
     }
 }
 
-fn cosine_similarity(a: &[f32], b: &[f32]) -> f32 {
+fn cosine_similarity(a: &[f32], b: &[f32]) -> Result<f32, RecallError> {
+    if a.len() != b.len() {
+        return Err(RecallError::DimensionMismatch {
+            query: a.len(), 
+            stored: b.len() 
+        });
+    } 
     let mut dot_product = 0.0;
     let mut magnitude_a = 0.0;
     let mut magnitude_b = 0.0;
@@ -56,7 +74,10 @@ fn cosine_similarity(a: &[f32], b: &[f32]) -> f32 {
         magnitude_b += b[i] * b[i];
     }
 
-    dot_product / (magnitude_a.sqrt() * magnitude_b.sqrt())
+    Ok(
+        dot_product 
+            / (magnitude_a.sqrt() * magnitude_b.sqrt())
+    )
 }
 fn main() {
     let mut database = Database::new();
@@ -80,10 +101,21 @@ fn main() {
     database.insert(vector2);
     database.insert(vector3);
 
-    let query = vec![0.10, 0.51, 0.79];
-    let results = database.search(&query);
-
-    for result in results {
-        println!("{} * {}", result.id, result.score);
+    let query = vec![0.10, 0.51];
+    match database.search(&query, 2) {
+    Ok(results) => {
+        for result in results {
+            println!("{} → {}", result.id, result.score);
+        }
     }
+
+    Err(RecallError::DimensionMismatch { query, stored }) => {
+        println!(
+            "Search failed: query has {} dimensions, stored vector has {} dimensions",
+            query,
+            stored
+        );
+    }
+}
+
 }
