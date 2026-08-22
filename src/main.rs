@@ -1,13 +1,10 @@
 mod vector;
+mod search_result;
+
 use crate::vector::Vector;
+use crate::search_result::SearchResult;
 use std::{collections::HashMap, println};
 
-
-
-struct SearchResult {
-    id: String,
-    score: f32,
-}
 
 struct Database {
     vectors: HashMap<String, Vector>,
