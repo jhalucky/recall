@@ -23,7 +23,7 @@ pub fn cosine_similarity(a: &[f32], b: &[f32]) -> Result<f32, RecallError> {
 
 #[cfg(test)]
 mod tests {
-    use std::{matches, result};
+    use std::matches;
 
 use super::*;
 

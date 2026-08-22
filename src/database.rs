@@ -44,4 +44,25 @@ impl Database {
 }
 
 
+#[cfg(test)]
+mod tests {
+    use std::vec;
 
+    use super::*;
+    use crate::vector::Vector;
+
+    #[test]
+    fn test_insert_and_get_vector() {
+        let mut database = Database::new();
+
+        let vector = Vector {
+            id: String::from("doc_001"),
+            values: vec![1.0,2.0,3.0]
+        };
+
+        database.insert(vector);
+        let result = database.get("doc_001");
+
+        assert!(result.is_some());
+    }
+}
