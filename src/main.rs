@@ -1,9 +1,8 @@
+mod vector;
+use crate::vector::Vector;
 use std::{collections::HashMap, println};
 
-struct Vector {
-    id: String,
-    values: Vec<f32>,
-}
+
 
 struct SearchResult {
     id: String,
@@ -101,7 +100,7 @@ fn main() {
     database.insert(vector2);
     database.insert(vector3);
 
-    let query = vec![0.10, 0.51];
+    let query = vec![0.10, 0.51, 0.68];
     match database.search(&query, 2) {
     Ok(results) => {
         for result in results {
