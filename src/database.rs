@@ -136,4 +136,24 @@ mod tests {
         let results = database.search(&query, 10).unwrap();
         assert_eq!(results.len(), 2)
     }
+
+    #[test]
+    fn test_search_with_zero_top_k() {
+        let mut database = Database::new();
+
+        database.insert(Vector {
+            id: String::from("doc_001"),
+            values: vec![1.0, 0.0],
+        });
+
+        database.insert(Vector {
+            id: String::from("doc_002"),
+            values: vec![0.0, 1.0],
+        });
+
+        let query = vec![1.0, 0.0];
+        let results = database.search(&query, 0).unwrap();
+
+        assert!(results.is_empty());
+    }
 }

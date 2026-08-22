@@ -4,6 +4,8 @@ mod search_result;
 mod similarity;
 mod vector;
 
+use std::vec;
+
 use crate::database::Database;
 use crate::error::RecallError;
 use crate::vector::Vector;
