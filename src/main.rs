@@ -1,16 +1,12 @@
+mod database;
 mod error;
 mod search_result;
-mod vector;
-mod database;
 mod similarity;
+mod vector;
 
-
-use crate::error::RecallError;
 use crate::database::Database;
+use crate::error::RecallError;
 use crate::vector::Vector;
-
-
-
 
 fn main() {
     let mut database = Database::new();
