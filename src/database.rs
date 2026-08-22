@@ -46,7 +46,7 @@ impl Database {
 
 #[cfg(test)]
 mod tests {
-    use std::vec;
+    use std::{assert_eq, vec};
 
     use super::*;
     use crate::vector::Vector;
@@ -63,6 +63,11 @@ mod tests {
         database.insert(vector);
         let result = database.get("doc_001");
 
-        assert!(result.is_some());
+        let result = result.unwrap();
+
+        assert_eq!(result.id, "doc_001");
+        assert_eq!(result.values, vec![1.0,2.0,3.0]);
+
+    
     }
 }
