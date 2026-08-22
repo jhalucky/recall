@@ -24,6 +24,10 @@ impl Database {
         self.vectors.get(id)
     }
 
+    pub fn delete(&mut self, id: &str) -> Option<Vector> {
+        self.vectors.remove(id)
+    }
+
     pub fn search(&self, query: &[f32], top_k: usize) -> Result<Vec<SearchResult>, RecallError> {
         let mut results = Vec::new();
 
@@ -155,5 +159,23 @@ mod tests {
         let results = database.search(&query, 0).unwrap();
 
         assert!(results.is_empty());
+    }
+
+    #[test]
+    fn test_delete_existing_vector() {
+        let mut database = Database::new();
+
+        database.insert(Vector {
+            id: String::from("doc_001"),
+            values: vec![1.0, 2.0, 3.0],
+        });
+
+        let deleted = database.delete("doc_001");
+
+        assert!(deleted.is_some());
+
+        let result = database.get("doc_001");
+
+        assert!(result.is_none());
     }
 }
