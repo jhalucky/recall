@@ -1,71 +1,17 @@
 mod error;
 mod search_result;
 mod vector;
+mod database;
+mod similarity;
+
 
 use crate::error::RecallError;
-use crate::search_result::SearchResult;
+use crate::database::Database;
 use crate::vector::Vector;
 
-use std::{collections::HashMap, println};
 
-struct Database {
-    vectors: HashMap<String, Vector>,
-}
 
-impl Database {
-    fn new() -> Database {
-        Database {
-            vectors: HashMap::new(),
-        }
-    }
 
-    fn insert(&mut self, vector: Vector) {
-        self.vectors.insert(vector.id.clone(), vector);
-    }
-
-    fn get(&self, id: &str) -> Option<&Vector> {
-        self.vectors.get(id)
-    }
-
-    fn search(&self, query: &[f32], top_k: usize) -> Result<Vec<SearchResult>, RecallError> {
-        let mut results = Vec::new();
-
-        for vector in self.vectors.values() {
-            let score = cosine_similarity(query, &vector.values)?;
-
-            results.push(SearchResult {
-                id: vector.id.clone(),
-                score,
-            });
-        }
-        results.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap());
-
-        results.truncate(top_k);
-
-        Ok(results)
-    }
-}
-
-fn cosine_similarity(a: &[f32], b: &[f32]) -> Result<f32, RecallError> {
-    if a.len() != b.len() {
-        return Err(RecallError::DimensionMismatch {
-            query: a.len(),
-            stored: b.len(),
-        });
-    }
-    let mut dot_product = 0.0;
-    let mut magnitude_a = 0.0;
-    let mut magnitude_b = 0.0;
-
-    for i in 0..a.len() {
-        dot_product += a[i] * b[i];
-
-        magnitude_a += a[i] * a[i];
-        magnitude_b += b[i] * b[i];
-    }
-
-    Ok(dot_product / (magnitude_a.sqrt() * magnitude_b.sqrt()))
-}
 fn main() {
     let mut database = Database::new();
 
