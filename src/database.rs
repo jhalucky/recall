@@ -70,4 +70,12 @@ mod tests {
 
     
     }
+
+    #[test]
+    fn test_get_missing_vector() {
+        let database = Database::new();
+
+        let result = database.get("does not exist");
+        assert!(result.is_none());
+    }
 }
