@@ -1,4 +1,4 @@
-pub struct Vector{
+pub struct Vector {
     pub id: String,
-    pub values: Vec<f32>
+    pub values: Vec<f32>,
 }

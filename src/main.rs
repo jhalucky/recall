@@ -1,21 +1,17 @@
-mod vector;
+mod error;
 mod search_result;
+mod vector;
 
-use crate::vector::Vector;
+use crate::error::RecallError;
 use crate::search_result::SearchResult;
-use std::{collections::HashMap, println};
+use crate::vector::Vector;
 
+use std::{collections::HashMap, println};
 
 struct Database {
     vectors: HashMap<String, Vector>,
 }
 
-enum RecallError{
-    DimensionMismatch{
-        query: usize,
-        stored: usize
-    }
-}
 impl Database {
     fn new() -> Database {
         Database {
@@ -39,12 +35,10 @@ impl Database {
 
             results.push(SearchResult {
                 id: vector.id.clone(),
-                score
+                score,
             });
         }
-        results.sort_by(|a,b| {
-            b.score.partial_cmp(&a.score).unwrap()
-        });
+        results.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap());
 
         results.truncate(top_k);
 
@@ -55,10 +49,10 @@ impl Database {
 fn cosine_similarity(a: &[f32], b: &[f32]) -> Result<f32, RecallError> {
     if a.len() != b.len() {
         return Err(RecallError::DimensionMismatch {
-            query: a.len(), 
-            stored: b.len() 
+            query: a.len(),
+            stored: b.len(),
         });
-    } 
+    }
     let mut dot_product = 0.0;
     let mut magnitude_a = 0.0;
     let mut magnitude_b = 0.0;
@@ -70,10 +64,7 @@ fn cosine_similarity(a: &[f32], b: &[f32]) -> Result<f32, RecallError> {
         magnitude_b += b[i] * b[i];
     }
 
-    Ok(
-        dot_product 
-            / (magnitude_a.sqrt() * magnitude_b.sqrt())
-    )
+    Ok(dot_product / (magnitude_a.sqrt() * magnitude_b.sqrt()))
 }
 fn main() {
     let mut database = Database::new();
@@ -99,19 +90,17 @@ fn main() {
 
     let query = vec![0.10, 0.51, 0.68];
     match database.search(&query, 2) {
-    Ok(results) => {
-        for result in results {
-            println!("{} → {}", result.id, result.score);
+        Ok(results) => {
+            for result in results {
+                println!("{} → {}", result.id, result.score);
+            }
+        }
+
+        Err(RecallError::DimensionMismatch { query, stored }) => {
+            println!(
+                "Search failed: query has {} dimensions, stored vector has {} dimensions",
+                query, stored
+            );
         }
     }
-
-    Err(RecallError::DimensionMismatch { query, stored }) => {
-        println!(
-            "Search failed: query has {} dimensions, stored vector has {} dimensions",
-            query,
-            stored
-        );
-    }
-}
-
 }
