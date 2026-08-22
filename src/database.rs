@@ -178,4 +178,13 @@ mod tests {
 
         assert!(result.is_none());
     }
+
+    #[test]
+    fn test_delete_missing_vector() {
+        let mut database = Database::new();
+
+        let deleted = database.delete("does_not_exist");
+
+        assert!(deleted.is_none());
+    }
 }
