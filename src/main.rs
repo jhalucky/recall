@@ -1,5 +1,6 @@
 mod database;
 mod error;
+mod metadata;
 mod search_result;
 mod similarity;
 mod vector;
