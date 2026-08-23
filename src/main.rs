@@ -5,6 +5,7 @@ mod search_result;
 mod similarity;
 mod vector;
 
+use std::collections::HashMap;
 use std::vec;
 
 use crate::database::Database;
@@ -17,16 +18,19 @@ fn main() {
     let vector = Vector {
         id: String::from("doc_001"),
         values: vec![0.12, 0.55, 0.81],
+        metadata: HashMap::new()
     };
 
     let vector2 = Vector {
         id: String::from("doc_002"),
         values: vec![0.91, 0.12, 0.44],
+        metadata: HashMap::new()
     };
 
     let vector3 = Vector {
         id: String::from("doc_003"),
         values: vec![0.33, 0.72, 0.48],
+        metadata: HashMap::new()
     };
 
     database.insert(vector);

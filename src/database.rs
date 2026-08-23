@@ -73,6 +73,7 @@ mod tests {
         let vector = Vector {
             id: String::from("doc_001"),
             values: vec![1.0, 2.0, 3.0],
+            metadata: HashMap::new()
         };
 
         database.insert(vector);
@@ -99,16 +100,19 @@ mod tests {
         database.insert(Vector {
             id: String::from("doc_001"),
             values: vec![1.0, 0.0],
+            metadata: HashMap::new()
         });
 
         database.insert(Vector {
             id: String::from("doc_002"),
             values: vec![0.0, 1.0],
+            metadata: HashMap::new()
         });
 
         database.insert(Vector {
             id: String::from("doc_003"),
             values: vec![0.8, 0.2],
+            metadata: HashMap::new()
         });
 
         let query = vec![1.0, 0.0];
@@ -128,11 +132,13 @@ mod tests {
         database.insert(Vector {
             id: String::from("doc_001"),
             values: vec![1.0, 0.0],
+            metadata: HashMap::new()
         });
 
         database.insert(Vector {
             id: String::from("doc_002"),
             values: vec![0.0, 1.0],
+            metadata: HashMap::new()
         });
 
         let query = vec![1.0, 0.0];
@@ -148,11 +154,13 @@ mod tests {
         database.insert(Vector {
             id: String::from("doc_001"),
             values: vec![1.0, 0.0],
+            metadata: HashMap::new()
         });
 
         database.insert(Vector {
             id: String::from("doc_002"),
             values: vec![0.0, 1.0],
+            metadata: HashMap::new()
         });
 
         let query = vec![1.0, 0.0];
@@ -168,6 +176,7 @@ mod tests {
         database.insert(Vector {
             id: String::from("doc_001"),
             values: vec![1.0, 2.0, 3.0],
+            metadata: HashMap::new()
         });
 
         let deleted = database.delete("doc_001");
