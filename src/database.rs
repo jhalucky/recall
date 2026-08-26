@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use crate::error::RecallError;
+use crate::metadata::MetadataValue;
 use crate::search_result::SearchResult;
 use crate::similarity::cosine_similarity;
 use crate::vector::Vector;
@@ -73,7 +74,7 @@ mod tests {
         let vector = Vector {
             id: String::from("doc_001"),
             values: vec![1.0, 2.0, 3.0],
-            metadata: HashMap::new()
+            metadata: HashMap::new(),
         };
 
         database.insert(vector);
@@ -100,19 +101,19 @@ mod tests {
         database.insert(Vector {
             id: String::from("doc_001"),
             values: vec![1.0, 0.0],
-            metadata: HashMap::new()
+            metadata: HashMap::new(),
         });
 
         database.insert(Vector {
             id: String::from("doc_002"),
             values: vec![0.0, 1.0],
-            metadata: HashMap::new()
+            metadata: HashMap::new(),
         });
 
         database.insert(Vector {
             id: String::from("doc_003"),
             values: vec![0.8, 0.2],
-            metadata: HashMap::new()
+            metadata: HashMap::new(),
         });
 
         let query = vec![1.0, 0.0];
@@ -132,13 +133,13 @@ mod tests {
         database.insert(Vector {
             id: String::from("doc_001"),
             values: vec![1.0, 0.0],
-            metadata: HashMap::new()
+            metadata: HashMap::new(),
         });
 
         database.insert(Vector {
             id: String::from("doc_002"),
             values: vec![0.0, 1.0],
-            metadata: HashMap::new()
+            metadata: HashMap::new(),
         });
 
         let query = vec![1.0, 0.0];
@@ -154,13 +155,13 @@ mod tests {
         database.insert(Vector {
             id: String::from("doc_001"),
             values: vec![1.0, 0.0],
-            metadata: HashMap::new()
+            metadata: HashMap::new(),
         });
 
         database.insert(Vector {
             id: String::from("doc_002"),
             values: vec![0.0, 1.0],
-            metadata: HashMap::new()
+            metadata: HashMap::new(),
         });
 
         let query = vec![1.0, 0.0];
@@ -176,7 +177,7 @@ mod tests {
         database.insert(Vector {
             id: String::from("doc_001"),
             values: vec![1.0, 2.0, 3.0],
-            metadata: HashMap::new()
+            metadata: HashMap::new(),
         });
 
         let deleted = database.delete("doc_001");
@@ -195,5 +196,39 @@ mod tests {
         let deleted = database.delete("does_not_exist");
 
         assert!(deleted.is_none());
+    }
+
+    #[test]
+    fn test_vector_database() {
+        let mut database = Database::new();
+
+        let mut metadata = HashMap::new();
+
+        metadata.insert(
+            String::from("title"),
+            MetadataValue::String(String::from("Learning Rust")),
+        );
+
+        metadata.insert(String::from("year"), MetadataValue::Integer(2026));
+
+        let vector = Vector {
+            id: String::from("doc_001"),
+            values: vec![1.0, 2.0, 3.0],
+            metadata,
+        };
+
+        database.insert(vector);
+
+        let result = database.get("doc_001").unwrap();
+
+        assert_eq!(
+            result.metadata.get("title"),
+            Some(&MetadataValue::String(String::from("Learning Rust")))
+        );
+
+        assert_eq!(
+            result.metadata.get("year"),
+            Some(&MetadataValue::Integer(2026))
+        );
     }
 }
