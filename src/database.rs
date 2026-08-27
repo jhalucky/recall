@@ -17,8 +17,13 @@ impl Database {
         }
     }
 
-    pub fn insert(&mut self, vector: Vector) {
+    pub fn insert(&mut self, vector: Vector) -> Result<(), RecallError> {
+        if self.vectors.contains_key(&vector.id) {
+            return Err(RecallError::VectorAlreadyExists);
+        }
         self.vectors.insert(vector.id.clone(), vector);
+
+        Ok(())
     }
 
     pub fn get(&self, id: &str) -> Option<&Vector> {
@@ -53,6 +58,35 @@ impl Database {
         for result in &results {
             println!("{} -> {}", result.id, result.score);
         }
+
+        results.truncate(top_k);
+
+        Ok(results)
+    }
+
+    pub fn search_with_filter(
+        &self,
+        query: &[f32],
+        top_k: usize,
+        key: &str,
+        value: &MetadataValue,
+    ) -> Result<Vec<SearchResult>, RecallError> {
+        let mut results = Vec::new();
+
+        for vector in self.vectors.values() {
+            if vector.metadata.get(key) != Some(value) {
+                continue;
+            }
+
+            let score = cosine_similarity(query, &vector.values)?;
+
+            results.push(SearchResult {
+                id: vector.id.clone(),
+                score,
+            });
+        }
+
+        results.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap());
 
         results.truncate(top_k);
 
@@ -230,5 +264,83 @@ mod tests {
             result.metadata.get("year"),
             Some(&MetadataValue::Integer(2026))
         );
+    }
+
+    #[test]
+    fn test_search_with_filter() {
+        let mut database = Database::new();
+
+        let mut rust_metadata = HashMap::new();
+
+        rust_metadata.insert(
+            String::from("category"),
+            MetadataValue::String(String::from("programming")),
+        );
+
+        database.insert(Vector {
+            id: String::from("doc_001"),
+            values: vec![1.0, 0.0],
+            metadata: rust_metadata,
+        });
+
+        let mut cooking_metadata = HashMap::new();
+
+        cooking_metadata.insert(
+            String::from("category"),
+            MetadataValue::String(String::from("cooking")),
+        );
+
+        database.insert(Vector {
+            id: String::from("doc_002"),
+            values: vec![1.0, 0.0],
+            metadata: cooking_metadata,
+        });
+
+        let mut python_metadata = HashMap::new();
+
+        python_metadata.insert(
+            String::from("category"),
+            MetadataValue::String(String::from("programming")),
+        );
+
+        database.insert(Vector {
+            id: String::from("doc_003"),
+            values: vec![0.8, 0.2],
+            metadata: python_metadata,
+        });
+
+        let query = vec![1.0, 0.0];
+
+        let filter_value = MetadataValue::String(String::from("programming"));
+
+        let results = database
+            .search_with_filter(&query, 10, "category", &filter_value)
+            .unwrap();
+
+        assert_eq!(results.len(), 2);
+
+        assert_eq!(results[0].id, "doc_001");
+        assert_eq!(results[1].id, "doc_003");
+    }
+
+    #[test]
+    fn test_insert_replaces_existing_vector() {
+        let mut database = Database::new();
+
+        database.insert(Vector {
+            id: String::from("doc_001"),
+            values: vec![1.0, 0.0],
+            metadata: HashMap::new(),
+        });
+
+        database.insert(Vector {
+            id: String::from("doc_001"),
+            values: vec![0.5, 0.5],
+            metadata: HashMap::new(),
+        });
+
+        let result = database.get("doc_001").unwrap();
+
+        assert_eq!(result.values, vec![0.5, 0.5]);
     }
 }
