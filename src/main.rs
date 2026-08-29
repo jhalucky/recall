@@ -109,7 +109,16 @@ fn main() -> Result<(), RecallError> {
                 }
             }
             "upsert" => {
-                println!("Running upsert...")
+                let vector = Vector {
+                    id: String::from("doc_004"),
+                    values: vec![0.4, 1.5],
+                    metadata: HashMap::new()
+                };
+
+                database.upsert(vector);
+                database.save("recall.json")?;
+
+                println!("Vector upserted successfully!")
             }
             _ => {
                 println!("Unknown command")
