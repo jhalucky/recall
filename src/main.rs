@@ -7,6 +7,7 @@ mod vector;
 
 use std::collections::HashMap;
 use std::env;
+use std::path::Path;
 use std::{println, vec};
 
 use crate::database::Database;
@@ -14,15 +15,21 @@ use crate::error::RecallError;
 use crate::metadata::MetadataValue;
 use crate::vector::Vector;
 
-fn main() {
-    let mut database = Database::new();
+fn main() -> Result<(), RecallError> {
+    let mut database;
+
+    if Path::new("recall.json").exists() {
+        database = Database::load("recall.json")?;
+    } else {
+        database = Database::new();
+    }
 
     let args: Vec<String> = env::args().collect();
 
     if args.len() > 1 {
         match args[1].as_str() {
             "search" => {
-                let query = vec![0.12, 0.55, 0.81];
+                let query = vec![1.0, 0.0];
                 match database.search(&query, 1) {
                     Ok(results) => {
                         for result in results {
@@ -52,7 +59,16 @@ fn main() {
             }
 
             "insert" => {
-                println!("Running insert...")
+                let vector = Vector {
+                    id: String::from("doc_004"),
+                    values: vec![1.0, 0.0],
+                    metadata: HashMap::new(),
+                };
+
+                database.insert(vector)?;
+                database.save("recall.json")?;
+
+                println!("Vector inserted successfully.")
             }
             "get" => {
                 println!("Running get...")
@@ -102,23 +118,5 @@ fn main() {
     database.insert(vector2).unwrap();
     database.insert(vector3).unwrap();
 
-    let query = vec![0.12, 0.55, 0.81];
-    // match database.search(&query, 1) {
-    //     Ok(results) => {
-    //         for result in results {
-    //             // println!("{} → {}", result.id, result.score);
-    //         }
-    //     }
-
-    //     Err(RecallError::DimensionMismatch { query, stored }) => {
-    //         println!(
-    //             "Search failed: query has {} dimensions, stored vector has {} dimensions",
-    //             query, stored
-    //         );
-    //     }
-
-    //     Err(RecallError::VectorAlreadyExists) => {
-    //         println!("VectorAlreadyExists");
-    //     }
-    // }
+    Ok(())
 }
