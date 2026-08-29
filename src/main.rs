@@ -59,16 +59,37 @@ fn main() -> Result<(), RecallError> {
             }
 
             "insert" => {
-                let vector = Vector {
-                    id: String::from("doc_004"),
-                    values: vec![1.0, 0.0],
-                    metadata: HashMap::new(),
-                };
+                if args.len() < 4 {
+                    println!("Usage: cargo run -- insert <id> <value1> <value2> ...")
+                } else {
+                    let id = args[2].clone();
 
-                database.insert(vector)?;
-                database.save("recall.json")?;
+                    let values: Result<Vec<f32>, _> = args[3..]
+                        .iter()
+                        .map(|value| value.parse::<f32>())
+                        .collect();
 
-                println!("Vector inserted successfully.")
+                    match values {
+                        Ok(values) => {
+                            let vector = Vector {
+                                id,
+                                values,
+                                metadata: HashMap::new()
+                            };
+
+                            database.insert(vector)?;
+                            database.save("recall.json")?;
+
+                            println!("Vector inserted successfully.")
+                        }
+
+                        Err(error) => {
+                            println!("invalid vector values: {}", error);
+                        }
+                    }
+                }
+
+                
             }
             "get" => {
                 if args.len() < 3 {
