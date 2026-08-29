@@ -34,6 +34,10 @@ impl Database {
         self.vectors.remove(id)
     }
 
+    pub fn upsert(&mut self, vector: Vector) {
+        self.vectors.insert(vector.id.clone(), vector);
+    }
+
     pub fn search(&self, query: &[f32], top_k: usize) -> Result<Vec<SearchResult>, RecallError> {
         let mut results = Vec::new();
 
@@ -96,7 +100,7 @@ impl Database {
 
 #[cfg(test)]
 mod tests {
-    use std::{assert_eq, vec};
+    use std::{assert_eq, print, vec};
 
     use super::*;
     use crate::{database, vector::Vector};
@@ -324,23 +328,50 @@ mod tests {
     }
 
     #[test]
-    fn test_insert_replaces_existing_vector() {
+    fn test_insert_rejects_duplicate_vector() {
         let mut database = Database::new();
 
-        database.insert(Vector {
-            id: String::from("doc_001"),
-            values: vec![1.0, 0.0],
-            metadata: HashMap::new(),
-        });
+        database
+            .insert(Vector {
+                id: String::from("doc_001"),
+                values: vec![1.0, 0.0],
+                metadata: HashMap::new(),
+            })
+            .unwrap();
 
-        database.insert(Vector {
+        let result = database.insert(Vector {
             id: String::from("doc_001"),
             values: vec![0.5, 0.5],
             metadata: HashMap::new(),
         });
 
-        let result = database.get("doc_001").unwrap();
+        assert!(matches!(result, Err(RecallError::VectorAlreadyExists)));
 
-        assert_eq!(result.values, vec![0.5, 0.5]);
+        let stored = database.get("doc_001").unwrap();
+
+        assert_eq!(stored.values, vec![1.0, 0.0]);
+    }
+
+    #[test]
+    fn test_upsert_replaces_existing_vector() {
+        let mut database = Database::new();
+
+        database
+            .insert(Vector {
+                id: String::from("doc_001"),
+                values: vec![1.0, 0.0],
+                metadata: HashMap::new(),
+            })
+            .unwrap();
+
+        database.upsert(Vector {
+            id: String::from("doc_001"),
+            values: vec![0.5, 0.5],
+            metadata: HashMap::new(),
+        });
+
+        let stored = database.get("doc_001").unwrap();
+
+        assert_eq!(stored.values, vec![0.5, 0.5]);
     }
 }

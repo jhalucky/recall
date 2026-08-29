@@ -6,7 +6,7 @@ mod similarity;
 mod vector;
 
 use std::collections::HashMap;
-use std::vec;
+use std::{println, vec};
 
 use crate::database::Database;
 use crate::error::RecallError;
@@ -60,6 +60,10 @@ fn main() {
                 "Search failed: query has {} dimensions, stored vector has {} dimensions",
                 query, stored
             );
+        }
+
+        Err(RecallError::VectorAlreadyExists) => {
+            println!("VectorAlreadyExists");
         }
     }
 }
