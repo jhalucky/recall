@@ -91,6 +91,7 @@ fn main() -> Result<(), RecallError> {
 
                 
             }
+
             "get" => {
                 if args.len() < 3 {
                     println!("Usage: cargo run -- get <id>");                
@@ -110,6 +111,7 @@ fn main() -> Result<(), RecallError> {
                     }
                 }
             }
+
             "delete" => {
                 if args.len() < 3 {
                     println!("usage: cargo run -- delete <id>")
@@ -129,17 +131,39 @@ fn main() -> Result<(), RecallError> {
                     }
                 }
             }
+
             "upsert" => {
-                let vector = Vector {
-                    id: String::from("doc_004"),
-                    values: vec![0.4, 1.5],
-                    metadata: HashMap::new()
-                };
+                if args.len() < 4 {
+                    println!("Usage: cargo run -- upsert <id> <value1> <value2> ...");   
+                } else {
+                    let id = args[2].clone();
 
-                database.upsert(vector);
-                database.save("recall.json")?;
+                    let values: Result<Vec<f32>, _> = args[3..]
+                        .iter()
+                        .map(|value| value.parse::<f32>())
+                        .collect();
 
-                println!("Vector upserted successfully!")
+                    match values {
+                        Ok(values) => {
+                            let vector = Vector {
+                                id,
+                                values,
+                                metadata: HashMap::new()
+                            };
+
+                             database.upsert(vector);
+                             database.save("recall.json")?;
+
+                             println!("Vector upserted successfully!");
+                        }
+
+                        Err(error) => {
+                            println!("invalid vector value: {}", error);
+                        }
+                    }
+                }
+
+               
             }
             _ => {
                 println!("Unknown command")
