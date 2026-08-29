@@ -71,10 +71,42 @@ fn main() -> Result<(), RecallError> {
                 println!("Vector inserted successfully.")
             }
             "get" => {
-                println!("Running get...")
+                if args.len() < 3 {
+                    println!("Usage: cargo run -- get <id>");                
+                } else {
+                    let id = &args[2];
+
+                    match database.get(id) {
+                        Some(vector) => {
+                            println!("ID: {}", vector.id);
+                            println!("Vector: {:?}", vector.values);
+                            println!("Metadata: {:?}", vector.metadata);
+                        }
+
+                        None => {
+                            println!("Vector not found: {}", id);
+                        }
+                    }
+                }
             }
             "delete" => {
-                println!("Running delete...")
+                if args.len() < 3 {
+                    println!("usage: cargo run -- delete <id>")
+                } else {
+                    let id = &args[2];
+
+                    match database.delete(id) {
+                        Some(vector) => {
+                            database.save("recall.json")?;
+
+                            println!("Deleted vector: {}", vector.id);
+                        }
+
+                        None => {
+                            println!("vector not found: {}", id);
+                        }
+                    }
+                }
             }
             "upsert" => {
                 println!("Running upsert...")
