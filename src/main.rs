@@ -7,6 +7,7 @@ mod vector;
 
 use std::collections::HashMap;
 use std::{println, vec};
+use std::env;
 
 use crate::database::Database;
 use crate::error::RecallError;
@@ -14,6 +15,35 @@ use crate::metadata::MetadataValue;
 use crate::vector::Vector;
 
 fn main() {
+    let args: Vec<String> = env::args().collect();
+
+    // println!("{:?}", args);
+
+    if args.len() > 1 {
+        match args[1].as_str() {
+            "search" => {
+                println!("Running search...")
+            }
+            "insert" => {
+                println!("Running insert...")
+            }
+            "get" => {
+                println!("Running get...")
+            }
+            "delete" => {
+                println!("Running delete...")
+            }
+            "upsert" => {
+                println!("Running upsert...")
+            }
+            _ => {
+                println!("Unknown command")
+            }
+        } 
+    } else {
+            println!("Please provide a command.")
+    }
+
     let mut database = Database::new();
 
     let mut metadata = HashMap::new();
@@ -43,15 +73,15 @@ fn main() {
         metadata: HashMap::new(),
     };
 
-    database.insert(vector);
-    database.insert(vector2);
-    database.insert(vector3);
+    database.insert(vector).unwrap();
+    database.insert(vector2).unwrap();
+    database.insert(vector3).unwrap();
 
     let query = vec![0.12, 0.55, 0.81];
     match database.search(&query, 1) {
         Ok(results) => {
             for result in results {
-                println!("{} → {}", result.id, result.score);
+                // println!("{} → {}", result.id, result.score);
             }
         }
 

@@ -49,19 +49,8 @@ impl Database {
                 score,
             });
         }
-        println!("Before sorting:");
-
-        for result in &results {
-            println!("{} -> {}", result.id, result.score);
-        }
 
         results.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap());
-
-        println!("After sorting:");
-
-        for result in &results {
-            println!("{} -> {}", result.id, result.score);
-        }
 
         results.truncate(top_k);
 
@@ -115,7 +104,7 @@ mod tests {
             metadata: HashMap::new(),
         };
 
-        database.insert(vector);
+        database.insert(vector).unwrap();
         let result = database.get("doc_001");
 
         let result = result.unwrap();
@@ -136,23 +125,29 @@ mod tests {
     fn test_search_returns_top_k_results() {
         let mut database = Database::new();
 
-        database.insert(Vector {
-            id: String::from("doc_001"),
-            values: vec![1.0, 0.0],
-            metadata: HashMap::new(),
-        });
+        database
+            .insert(Vector {
+                id: String::from("doc_001"),
+                values: vec![1.0, 0.0],
+                metadata: HashMap::new(),
+            })
+            .unwrap();
 
-        database.insert(Vector {
-            id: String::from("doc_002"),
-            values: vec![0.0, 1.0],
-            metadata: HashMap::new(),
-        });
+        database
+            .insert(Vector {
+                id: String::from("doc_002"),
+                values: vec![0.0, 1.0],
+                metadata: HashMap::new(),
+            })
+            .unwrap();
 
-        database.insert(Vector {
-            id: String::from("doc_003"),
-            values: vec![0.8, 0.2],
-            metadata: HashMap::new(),
-        });
+        database
+            .insert(Vector {
+                id: String::from("doc_003"),
+                values: vec![0.8, 0.2],
+                metadata: HashMap::new(),
+            })
+            .unwrap();
 
         let query = vec![1.0, 0.0];
 
@@ -168,17 +163,21 @@ mod tests {
     fn test_seacrh_top_k_larger_than_database() {
         let mut database = Database::new();
 
-        database.insert(Vector {
-            id: String::from("doc_001"),
-            values: vec![1.0, 0.0],
-            metadata: HashMap::new(),
-        });
+        database
+            .insert(Vector {
+                id: String::from("doc_001"),
+                values: vec![1.0, 0.0],
+                metadata: HashMap::new(),
+            })
+            .unwrap();
 
-        database.insert(Vector {
-            id: String::from("doc_002"),
-            values: vec![0.0, 1.0],
-            metadata: HashMap::new(),
-        });
+        database
+            .insert(Vector {
+                id: String::from("doc_002"),
+                values: vec![0.0, 1.0],
+                metadata: HashMap::new(),
+            })
+            .unwrap();
 
         let query = vec![1.0, 0.0];
 
@@ -190,17 +189,21 @@ mod tests {
     fn test_search_with_zero_top_k() {
         let mut database = Database::new();
 
-        database.insert(Vector {
-            id: String::from("doc_001"),
-            values: vec![1.0, 0.0],
-            metadata: HashMap::new(),
-        });
+        database
+            .insert(Vector {
+                id: String::from("doc_001"),
+                values: vec![1.0, 0.0],
+                metadata: HashMap::new(),
+            })
+            .unwrap();
 
-        database.insert(Vector {
-            id: String::from("doc_002"),
-            values: vec![0.0, 1.0],
-            metadata: HashMap::new(),
-        });
+        database
+            .insert(Vector {
+                id: String::from("doc_002"),
+                values: vec![0.0, 1.0],
+                metadata: HashMap::new(),
+            })
+            .unwrap();
 
         let query = vec![1.0, 0.0];
         let results = database.search(&query, 0).unwrap();
@@ -212,11 +215,13 @@ mod tests {
     fn test_delete_existing_vector() {
         let mut database = Database::new();
 
-        database.insert(Vector {
-            id: String::from("doc_001"),
-            values: vec![1.0, 2.0, 3.0],
-            metadata: HashMap::new(),
-        });
+        database
+            .insert(Vector {
+                id: String::from("doc_001"),
+                values: vec![1.0, 2.0, 3.0],
+                metadata: HashMap::new(),
+            })
+            .unwrap();
 
         let deleted = database.delete("doc_001");
 
@@ -255,7 +260,7 @@ mod tests {
             metadata,
         };
 
-        database.insert(vector);
+        database.insert(vector).unwrap();
 
         let result = database.get("doc_001").unwrap();
 
@@ -281,11 +286,13 @@ mod tests {
             MetadataValue::String(String::from("programming")),
         );
 
-        database.insert(Vector {
-            id: String::from("doc_001"),
-            values: vec![1.0, 0.0],
-            metadata: rust_metadata,
-        });
+        database
+            .insert(Vector {
+                id: String::from("doc_001"),
+                values: vec![1.0, 0.0],
+                metadata: rust_metadata,
+            })
+            .unwrap();
 
         let mut cooking_metadata = HashMap::new();
 
@@ -294,11 +301,13 @@ mod tests {
             MetadataValue::String(String::from("cooking")),
         );
 
-        database.insert(Vector {
-            id: String::from("doc_002"),
-            values: vec![1.0, 0.0],
-            metadata: cooking_metadata,
-        });
+        database
+            .insert(Vector {
+                id: String::from("doc_002"),
+                values: vec![1.0, 0.0],
+                metadata: cooking_metadata,
+            })
+            .unwrap();
 
         let mut python_metadata = HashMap::new();
 
@@ -307,11 +316,13 @@ mod tests {
             MetadataValue::String(String::from("programming")),
         );
 
-        database.insert(Vector {
-            id: String::from("doc_003"),
-            values: vec![0.8, 0.2],
-            metadata: python_metadata,
-        });
+        database
+            .insert(Vector {
+                id: String::from("doc_003"),
+                values: vec![0.8, 0.2],
+                metadata: python_metadata,
+            })
+            .unwrap();
 
         let query = vec![1.0, 0.0];
 
