@@ -66,6 +66,14 @@ impl Database {
         Ok(())
     }
 
+    pub fn load(path: &str) -> Result<Database, RecallError> {
+        let file = File::open(path)?;
+
+        let vectors = serde_json::from_reader(file)?;
+
+        Ok(Database { vectors })
+    }
+
     pub fn search_with_filter(
         &self,
         query: &[f32],
@@ -98,7 +106,9 @@ impl Database {
 
 #[cfg(test)]
 mod tests {
-    use std::{assert_eq, print, vec};
+    use std::{assert_eq, fs::metadata, print, vec};
+
+    use serde_json::error::Category::Data;
 
     use super::*;
     use crate::{database, vector::Vector};
@@ -393,5 +403,25 @@ mod tests {
         let stored = database.get("doc_001").unwrap();
 
         assert_eq!(stored.values, vec![0.5, 0.5]);
+    }
+
+    #[test]
+    fn test_save_database() {
+        let mut database = Database::new();
+
+        database
+            .insert(Vector {
+                id: String::from("doc_001"),
+                values: vec![1.0, 2.0, 3.0],
+                metadata: HashMap::new(),
+            })
+            .unwrap();
+
+        let path = "test_recall.json";
+
+        database.save(path).unwrap();
+
+        assert!(std::path::Path::new(path).exists());
+        // std::fs::remove_file(path).unwrap();
     }
 }
