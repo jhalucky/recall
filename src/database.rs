@@ -424,4 +424,29 @@ mod tests {
         assert!(std::path::Path::new(path).exists());
         // std::fs::remove_file(path).unwrap();
     }
+
+    #[test]
+    fn test_save_and_load_database() {
+        let mut database = Database::new();
+
+        database
+            .insert(Vector {
+                id: String::from("doc_001"),
+                values: vec![1.0, 2.0, 3.0],
+                metadata: HashMap::new(),
+            })
+            .unwrap();
+
+        let path = "test_recall.json";
+
+        database.save(path).unwrap();
+
+        let loaded_db = Database::load(path).unwrap();
+        let result = loaded_db.get("doc_001").unwrap();
+
+        assert_eq!(result.id, "doc_001");
+        assert_eq!(result.values, vec![1.0, 2.0, 3.0]);
+
+        // std::fs::remove_file(path).unwrap();
+    }
 }
