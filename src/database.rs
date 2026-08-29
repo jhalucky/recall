@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::fs::File;
 
 use crate::error::RecallError;
 use crate::metadata::MetadataValue;
@@ -55,6 +56,14 @@ impl Database {
         results.truncate(top_k);
 
         Ok(results)
+    }
+
+    pub fn save(&self, path: &str) -> Result<(), RecallError> {
+        let file = File::create(path)?;
+
+        serde_json::to_writer(file, &self.vectors)?;
+
+        Ok(())
     }
 
     pub fn search_with_filter(

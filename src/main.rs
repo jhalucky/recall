@@ -40,6 +40,14 @@ fn main() {
                     Err(RecallError::VectorAlreadyExists) => {
                         println!("VectorAlreadyExists");
                     }
+
+                    Err(RecallError::IoError(error)) => {
+                        println!("I/O error: {}", error);
+                    }
+
+                    Err(RecallError::SerializationError(error)) => {
+                        println!("Serialization error: {}", error);
+                    }
                 }
             }
 
@@ -95,22 +103,22 @@ fn main() {
     database.insert(vector3).unwrap();
 
     let query = vec![0.12, 0.55, 0.81];
-    match database.search(&query, 1) {
-        Ok(results) => {
-            for result in results {
-                // println!("{} → {}", result.id, result.score);
-            }
-        }
+    // match database.search(&query, 1) {
+    //     Ok(results) => {
+    //         for result in results {
+    //             // println!("{} → {}", result.id, result.score);
+    //         }
+    //     }
 
-        Err(RecallError::DimensionMismatch { query, stored }) => {
-            println!(
-                "Search failed: query has {} dimensions, stored vector has {} dimensions",
-                query, stored
-            );
-        }
+    //     Err(RecallError::DimensionMismatch { query, stored }) => {
+    //         println!(
+    //             "Search failed: query has {} dimensions, stored vector has {} dimensions",
+    //             query, stored
+    //         );
+    //     }
 
-        Err(RecallError::VectorAlreadyExists) => {
-            println!("VectorAlreadyExists");
-        }
-    }
+    //     Err(RecallError::VectorAlreadyExists) => {
+    //         println!("VectorAlreadyExists");
+    //     }
+    // }
 }
