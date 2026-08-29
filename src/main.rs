@@ -6,8 +6,8 @@ mod similarity;
 mod vector;
 
 use std::collections::HashMap;
-use std::{println, vec};
 use std::env;
+use std::{println, vec};
 
 use crate::database::Database;
 use crate::error::RecallError;
@@ -15,15 +15,34 @@ use crate::metadata::MetadataValue;
 use crate::vector::Vector;
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
+    let mut database = Database::new();
 
-    // println!("{:?}", args);
+    let args: Vec<String> = env::args().collect();
 
     if args.len() > 1 {
         match args[1].as_str() {
             "search" => {
-                println!("Running search...")
+                let query = vec![0.12, 0.55, 0.81];
+                match database.search(&query, 1) {
+                    Ok(results) => {
+                        for result in results {
+                            println!("{} → {}", result.id, result.score);
+                        }
+                    }
+
+                    Err(RecallError::DimensionMismatch { query, stored }) => {
+                        println!(
+                            "Search failed: query has {} dimensions, stored vector has {} dimensions",
+                            query, stored
+                        );
+                    }
+
+                    Err(RecallError::VectorAlreadyExists) => {
+                        println!("VectorAlreadyExists");
+                    }
+                }
             }
+
             "insert" => {
                 println!("Running insert...")
             }
@@ -39,12 +58,10 @@ fn main() {
             _ => {
                 println!("Unknown command")
             }
-        } 
+        }
     } else {
-            println!("Please provide a command.")
+        println!("Please provide a command.")
     }
-
-    let mut database = Database::new();
 
     let mut metadata = HashMap::new();
 
