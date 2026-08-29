@@ -8,16 +8,15 @@ mod vector;
 use std::collections::HashMap;
 use std::env;
 use std::path::Path;
-use std::{println, vec};
 
 use crate::database::Database;
 use crate::error::RecallError;
-use crate::metadata::MetadataValue;
 use crate::vector::Vector;
 
 fn main() -> Result<(), RecallError> {
     let mut database;
 
+    // Load existing database or create a new one.
     if Path::new("recall.json").exists() {
         database = Database::load("recall.json")?;
     } else {
@@ -26,183 +25,192 @@ fn main() -> Result<(), RecallError> {
 
     let args: Vec<String> = env::args().collect();
 
-    if args.len() > 1 {
-        match args[1].as_str() {
-            "search" => {
-                let query = vec![1.0, 0.0];
-                match database.search(&query, 1) {
-                    Ok(results) => {
+    if args.len() <= 1 {
+        println!("Please provide a command.");
+        return Ok(());
+    }
+
+    match args[1].as_str() {
+        "search" => {
+            if args.len() < 3 {
+                println!("Usage: cargo run -- search <value1> <value2> ... [--top-k N]");
+                return Ok(());
+            }
+
+            let mut values = Vec::new();
+            let mut top_k = 3;
+            let mut i = 2;
+
+            while i < args.len() {
+                if args[i] == "--top-k" {
+                    if i + 1 >= args.len() {
+                        println!("Missing value after --top-k");
+                        return Ok(());
+                    }
+
+                    match args[i + 1].parse::<usize>() {
+                        Ok(k) => top_k = k,
+                        Err(_) => {
+                            println!("Invalid top-k value");
+                            return Ok(());
+                        }
+                    }
+
+                    break;
+                }
+
+                match args[i].parse::<f32>() {
+                    Ok(value) => values.push(value),
+                    Err(_) => {
+                        println!("Invalid vector value: {}", args[i]);
+                        return Ok(());
+                    }
+                }
+
+                i += 1;
+            }
+
+            let query = values;
+
+            match database.search(&query, top_k) {
+                Ok(results) => {
+                    if results.is_empty() {
+                        println!("No results found.");
+                    } else {
                         for result in results {
                             println!("{} → {}", result.id, result.score);
                         }
                     }
-
-                    Err(RecallError::DimensionMismatch { query, stored }) => {
-                        println!(
-                            "Search failed: query has {} dimensions, stored vector has {} dimensions",
-                            query, stored
-                        );
-                    }
-
-                    Err(RecallError::VectorAlreadyExists) => {
-                        println!("VectorAlreadyExists");
-                    }
-
-                    Err(RecallError::IoError(error)) => {
-                        println!("I/O error: {}", error);
-                    }
-
-                    Err(RecallError::SerializationError(error)) => {
-                        println!("Serialization error: {}", error);
-                    }
-                }
-            }
-
-            "insert" => {
-                if args.len() < 4 {
-                    println!("Usage: cargo run -- insert <id> <value1> <value2> ...")
-                } else {
-                    let id = args[2].clone();
-
-                    let values: Result<Vec<f32>, _> = args[3..]
-                        .iter()
-                        .map(|value| value.parse::<f32>())
-                        .collect();
-
-                    match values {
-                        Ok(values) => {
-                            let vector = Vector {
-                                id,
-                                values,
-                                metadata: HashMap::new()
-                            };
-
-                            database.insert(vector)?;
-                            database.save("recall.json")?;
-
-                            println!("Vector inserted successfully.")
-                        }
-
-                        Err(error) => {
-                            println!("invalid vector values: {}", error);
-                        }
-                    }
                 }
 
-                
-            }
-
-            "get" => {
-                if args.len() < 3 {
-                    println!("Usage: cargo run -- get <id>");                
-                } else {
-                    let id = &args[2];
-
-                    match database.get(id) {
-                        Some(vector) => {
-                            println!("ID: {}", vector.id);
-                            println!("Vector: {:?}", vector.values);
-                            println!("Metadata: {:?}", vector.metadata);
-                        }
-
-                        None => {
-                            println!("Vector not found: {}", id);
-                        }
-                    }
-                }
-            }
-
-            "delete" => {
-                if args.len() < 3 {
-                    println!("usage: cargo run -- delete <id>")
-                } else {
-                    let id = &args[2];
-
-                    match database.delete(id) {
-                        Some(vector) => {
-                            database.save("recall.json")?;
-
-                            println!("Deleted vector: {}", vector.id);
-                        }
-
-                        None => {
-                            println!("vector not found: {}", id);
-                        }
-                    }
-                }
-            }
-
-            "upsert" => {
-                if args.len() < 4 {
-                    println!("Usage: cargo run -- upsert <id> <value1> <value2> ...");   
-                } else {
-                    let id = args[2].clone();
-
-                    let values: Result<Vec<f32>, _> = args[3..]
-                        .iter()
-                        .map(|value| value.parse::<f32>())
-                        .collect();
-
-                    match values {
-                        Ok(values) => {
-                            let vector = Vector {
-                                id,
-                                values,
-                                metadata: HashMap::new()
-                            };
-
-                             database.upsert(vector);
-                             database.save("recall.json")?;
-
-                             println!("Vector upserted successfully!");
-                        }
-
-                        Err(error) => {
-                            println!("invalid vector value: {}", error);
-                        }
-                    }
+                Err(RecallError::DimensionMismatch { query, stored }) => {
+                    println!(
+                        "Search failed: query has {} dimensions, stored vector has {} dimensions",
+                        query, stored
+                    );
                 }
 
-               
-            }
-            _ => {
-                println!("Unknown command")
+                Err(RecallError::VectorAlreadyExists) => {
+                    println!("Vector already exists.");
+                }
+
+                Err(RecallError::IoError(error)) => {
+                    println!("I/O error: {}", error);
+                }
+
+                Err(RecallError::SerializationError(error)) => {
+                    println!("Serialization error: {}", error);
+                }
             }
         }
-    } else {
-        println!("Please provide a command.")
+
+        "insert" => {
+            if args.len() < 4 {
+                println!("Usage: cargo run -- insert <id> <value1> <value2> ...");
+                return Ok(());
+            }
+
+            let id = args[2].clone();
+
+            let values: Result<Vec<f32>, _> =
+                args[3..].iter().map(|value| value.parse::<f32>()).collect();
+
+            match values {
+                Ok(values) => {
+                    let vector = Vector {
+                        id,
+                        values,
+                        metadata: HashMap::new(),
+                    };
+
+                    database.insert(vector)?;
+                    database.save("recall.json")?;
+
+                    println!("Vector inserted successfully.");
+                }
+
+                Err(error) => {
+                    println!("Invalid vector value: {}", error);
+                }
+            }
+        }
+
+        "get" => {
+            if args.len() < 3 {
+                println!("Usage: cargo run -- get <id>");
+                return Ok(());
+            }
+
+            let id = &args[2];
+
+            match database.get(id) {
+                Some(vector) => {
+                    println!("ID: {}", vector.id);
+                    println!("Vector: {:?}", vector.values);
+                    println!("Metadata: {:?}", vector.metadata);
+                }
+
+                None => {
+                    println!("Vector not found: {}", id);
+                }
+            }
+        }
+
+        "delete" => {
+            if args.len() < 3 {
+                println!("Usage: cargo run -- delete <id>");
+                return Ok(());
+            }
+
+            let id = &args[2];
+
+            match database.delete(id) {
+                Some(vector) => {
+                    database.save("recall.json")?;
+                    println!("Deleted vector: {}", vector.id);
+                }
+
+                None => {
+                    println!("Vector not found: {}", id);
+                }
+            }
+        }
+
+        "upsert" => {
+            if args.len() < 4 {
+                println!("Usage: cargo run -- upsert <id> <value1> <value2> ...");
+                return Ok(());
+            }
+
+            let id = args[2].clone();
+
+            let values: Result<Vec<f32>, _> =
+                args[3..].iter().map(|value| value.parse::<f32>()).collect();
+
+            match values {
+                Ok(values) => {
+                    let vector = Vector {
+                        id,
+                        values,
+                        metadata: HashMap::new(),
+                    };
+
+                    database.upsert(vector);
+                    database.save("recall.json")?;
+
+                    println!("Vector upserted successfully.");
+                }
+
+                Err(error) => {
+                    println!("Invalid vector value: {}", error);
+                }
+            }
+        }
+
+        _ => {
+            println!("Unknown command: {}", args[1]);
+        }
     }
-
-    let mut metadata = HashMap::new();
-
-    metadata.insert(
-        String::from("title"),
-        MetadataValue::String(String::from("Learning Rust")),
-    );
-    metadata.insert(String::from("year"), MetadataValue::Integer(2026));
-    metadata.insert(String::from("Published"), MetadataValue::Boolean(true));
-
-    let vector = Vector {
-        id: String::from("doc_001"),
-        values: vec![0.12, 0.55, 0.81],
-        metadata,
-    };
-
-    let vector2 = Vector {
-        id: String::from("doc_002"),
-        values: vec![0.91, 0.12, 0.44],
-        metadata: HashMap::new(),
-    };
-
-    let vector3 = Vector {
-        id: String::from("doc_003"),
-        values: vec![0.33, 0.72, 0.48],
-        metadata: HashMap::new(),
-    };
-
-    database.insert(vector).unwrap();
-    database.insert(vector2).unwrap();
-    database.insert(vector3).unwrap();
 
     Ok(())
 }
