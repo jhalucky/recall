@@ -254,6 +254,56 @@ fn main() -> Result<(), RecallError> {
             println!("Created {} vector(s).", inserted);
         }
 
+        "search-text" => {
+            if args.len() < 3 {
+                println!("Usage: cargo run -- search-text <query>");
+                return Ok(());
+            }
+
+            let query = args[2..].join(" ");
+
+            let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8000".to_string());
+
+            let query_vector = embedder.embed(&query)?;
+
+            match database.search(&query_vector, 3) {
+                Ok(results) => {
+                    if results.is_empty() {
+                        println!("No results found.");
+                    } else {
+                        println!("Search results for :\"{}\"", query);
+
+                        for result in results {
+                            println!("{} -> {}", result.id, result.score);
+                        }
+                    }
+                }
+
+                Err(RecallError::DimensionMismatch { query, stored }) => {
+                    println!(
+                        "Search failed: query has {} dimensions, stored vector has {} dimensions",
+                        query, stored
+                    );
+                }
+
+                Err(RecallError::VectorAlreadyExists) => {
+                    println!("Vector already exists.");
+                }
+
+                Err(RecallError::IoError(error)) => {
+                    println!("I/O error: {}", error);
+                }
+
+                Err(RecallError::SerializationError(error)) => {
+                    println!("Serialization error: {}", error);
+                }
+
+                Err(RecallError::ReqwestError(error)) => {
+                    println!("Embedding service error: {}", error);
+                }
+            }
+        }
+
         _ => {
             println!("Unknown command: {}", args[1]);
         }

@@ -3,3 +3,4 @@ embedding-service/.venv/
 __pycache__/
 *.pyc
 recall.json
+test_recall.json
