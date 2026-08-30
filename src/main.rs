@@ -5,6 +5,7 @@ mod error;
 mod metadata;
 mod search_result;
 mod similarity;
+mod tokenizer;
 mod vector;
 
 use std::collections::HashMap;
