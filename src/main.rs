@@ -1,6 +1,7 @@
 mod chunker;
 mod database;
 mod document;
+mod embedding;
 mod error;
 mod metadata;
 mod search_result;
@@ -103,6 +104,10 @@ fn main() -> Result<(), RecallError> {
 
                 Err(RecallError::SerializationError(error)) => {
                     println!("Serialization error: {}", error);
+                }
+
+                Err(RecallError::ReqwestError(error)) => {
+                    println!("Embedding service error: {}", error);
                 }
             }
         }

@@ -6,6 +6,7 @@ pub enum RecallError {
 
     IoError(std::io::Error),
     SerializationError(serde_json::Error),
+    ReqwestError(reqwest::Error),
 }
 
 impl From<std::io::Error> for RecallError {
@@ -17,5 +18,11 @@ impl From<std::io::Error> for RecallError {
 impl From<serde_json::Error> for RecallError {
     fn from(error: serde_json::Error) -> Self {
         RecallError::SerializationError(error)
+    }
+}
+
+impl From<reqwest::Error> for RecallError {
+    fn from(error: reqwest::Error) -> Self {
+        RecallError::ReqwestError(error)
     }
 }
