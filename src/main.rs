@@ -11,8 +11,8 @@ mod tokenizer;
 mod vector;
 
 use std::collections::HashMap;
-use std::env;
 use std::path::Path;
+use std::{env, println};
 
 use crate::database::Database;
 use crate::error::RecallError;
@@ -214,6 +214,44 @@ fn main() -> Result<(), RecallError> {
                     println!("Invalid vector value: {}", error);
                 }
             }
+        }
+
+        "add-document" => {
+            if args.len() < 3 {
+                println!("Usage: cargo run -- add-document <file>");
+                return Ok(());
+            }
+
+            let path = &args[2];
+
+            let text = match std::fs::read_to_string(path) {
+                Ok(text) => text,
+                Err(error) => {
+                    println!("Failed to read document: {}", error);
+                    return Ok(());
+                }
+            };
+
+            let document_id = Path::new(path)
+                .file_stem()
+                .and_then(|name| name.to_str())
+                .unwrap_or("document")
+                .to_string();
+
+            let doc = document::Document {
+                id: document_id,
+                text,
+                metadata: HashMap::new(),
+            };
+
+            let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8000".to_string());
+
+            let inserted = pipeline::process_document(&doc, 100, &embedder, &mut database)?;
+
+            database.save("recall.json")?;
+
+            println!("Document added successfully.");
+            println!("Created {} vector(s).", inserted);
         }
 
         _ => {

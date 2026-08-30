@@ -3,6 +3,7 @@ use crate::database::Database;
 use crate::document::Document;
 use crate::embedding::EmbeddingClient;
 use crate::error::RecallError;
+use crate::metadata::{self, MetadataValue};
 use crate::vector::Vector;
 
 pub fn process_document(
@@ -18,10 +19,21 @@ pub fn process_document(
     for chunk in chunks {
         let embedding = embedder.embed(&chunk.text)?;
 
+        let mut metadata = document.metadata.clone();
+
+        metadata.insert(
+            "document_id".to_string(),
+            MetadataValue::String(document.id.clone()),
+        );
+        metadata.insert(
+            "chunk_index".to_string(),
+            MetadataValue::Integer(chunk.chunk_index as i64),
+        );
+
         let vector = Vector {
             id: chunk.id,
             values: embedding,
-            metadata: document.metadata.clone(),
+            metadata,
         };
 
         database.upsert(vector);

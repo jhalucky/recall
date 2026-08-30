@@ -1,0 +1,5 @@
+Rust is a systems programming language focused on safety and performance.
+
+Rust provides memory safety without requiring a garbage collector.
+
+The language is useful for building fast and reliable software.

@@ -61,7 +61,7 @@ impl Database {
     pub fn save(&self, path: &str) -> Result<(), RecallError> {
         let file = File::create(path)?;
 
-        serde_json::to_writer(file, &self.vectors)?;
+        serde_json::to_writer_pretty(file, &self.vectors)?;
 
         Ok(())
     }
