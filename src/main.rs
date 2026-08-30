@@ -4,6 +4,7 @@ mod document;
 mod embedding;
 mod error;
 mod metadata;
+mod pipeline;
 mod search_result;
 mod similarity;
 mod tokenizer;
