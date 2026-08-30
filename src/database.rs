@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::fs::File;
+use std::vec;
 
 use crate::error::RecallError;
 use crate::metadata::MetadataValue;
@@ -48,6 +49,10 @@ impl Database {
             results.push(SearchResult {
                 id: vector.id.clone(),
                 score,
+                text: match vector.metadata.get("text") {
+                    Some(MetadataValue::String(text)) => text.clone(),
+                    _ => String::new(),
+                },
             });
         }
 
@@ -93,6 +98,10 @@ impl Database {
             results.push(SearchResult {
                 id: vector.id.clone(),
                 score,
+                text: match vector.metadata.get("text") {
+                    Some(MetadataValue::String(text)) => text.clone(),
+                    _ => String::new(),
+                },
             });
         }
 

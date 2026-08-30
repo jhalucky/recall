@@ -30,6 +30,11 @@ pub fn process_document(
             MetadataValue::Integer(chunk.chunk_index as i64),
         );
 
+        metadata.insert(
+            "text".to_string(),
+            MetadataValue::String(chunk.text.clone()),
+        );
+
         let vector = Vector {
             id: chunk.id,
             values: embedding,

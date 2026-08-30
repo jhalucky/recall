@@ -1,0 +1,19 @@
+Rust is a systems programming language focused on safety and performance.
+
+Rust provides memory safety without requiring a garbage collector.
+
+Ownership is one of the core concepts in Rust and controls how memory is managed.
+
+Borrowing allows Rust programs to reference data without taking ownership.
+
+The Rust compiler checks ownership and borrowing rules at compile time.
+
+Rust is commonly used for systems programming, web services, command line tools, and embedded software.
+
+Concurrency is another important feature of Rust because the type system helps prevent many data races.
+
+Rust provides zero-cost abstractions while maintaining strong compile-time guarantees.
+
+Cargo is the package manager and build system used by Rust projects.
+
+Rust has a growing ecosystem of libraries called crates.

@@ -246,7 +246,7 @@ fn main() -> Result<(), RecallError> {
 
             let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8000".to_string());
 
-            let inserted = pipeline::process_document(&doc, 100, &embedder, &mut database)?;
+            let inserted = pipeline::process_document(&doc, 20, &embedder, &mut database)?;
 
             database.save("recall.json")?;
 
@@ -256,25 +256,59 @@ fn main() -> Result<(), RecallError> {
 
         "search-text" => {
             if args.len() < 3 {
-                println!("Usage: cargo run -- search-text <query>");
+                println!("Usage: cargo run -- search-text <query> [--top-k N]");
                 return Ok(());
             }
 
-            let query = args[2..].join(" ");
+            let mut query_parts = Vec::new();
+            let mut top_k = 3;
+            let mut i = 2;
+
+            while i < args.len() {
+                if args[i] == "--top-k" {
+                    if i + 1 >= args.len() {
+                        println!("Missing value after --top-k");
+                        return Ok(());
+                    }
+
+                    match args[i + 1].parse::<usize>() {
+                        Ok(k) if k > 0 => top_k = k,
+                        _ => {
+                            println!("Invalid top-k value");
+                            return Ok(());
+                        }
+                    }
+
+                    i += 2;
+                    continue;
+                }
+
+                query_parts.push(args[i].clone());
+                i += 1;
+            }
+
+            if query_parts.is_empty() {
+                println!("Search query cannot be empty.");
+                return Ok(());
+            }
+
+            let query = query_parts.join(" ");
 
             let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8000".to_string());
 
             let query_vector = embedder.embed(&query)?;
 
-            match database.search(&query_vector, 3) {
+            match database.search(&query_vector, top_k) {
                 Ok(results) => {
                     if results.is_empty() {
                         println!("No results found.");
                     } else {
-                        println!("Search results for :\"{}\"", query);
+                        println!("Search results for: \"{}\"", query);
 
                         for result in results {
                             println!("{} -> {}", result.id, result.score);
+                            println!(" {}", result.text);
+                            println!();
                         }
                     }
                 }
