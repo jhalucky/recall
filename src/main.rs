@@ -1,4 +1,6 @@
+mod chunker;
 mod database;
+mod document;
 mod error;
 mod metadata;
 mod search_result;
