@@ -1,1 +1,5 @@
 /target
+embedding-service/.venv/
+__pycache__/
+*.pyc
+recall.json
