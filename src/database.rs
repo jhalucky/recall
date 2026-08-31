@@ -48,6 +48,16 @@ impl Database {
             results.push(SearchResult {
                 id: vector.id.clone(),
                 score,
+                document_id: match vector.metadata.get("document_id") {
+                    Some(MetadataValue::String(id)) => id.clone(),
+                    _ => String::new(),
+                },
+
+                chunk_index: match vector.metadata.get("chunk_index") {
+                    Some(MetadataValue::Integer(index)) => *index as usize,
+                    _ => 0,
+                },
+
                 text: match vector.metadata.get("text") {
                     Some(MetadataValue::String(text)) => text.clone(),
                     _ => String::new(),
@@ -97,6 +107,16 @@ impl Database {
             results.push(SearchResult {
                 id: vector.id.clone(),
                 score,
+                document_id: match vector.metadata.get("document_id") {
+                    Some(MetadataValue::String(id)) => id.clone(),
+                    _ => String::new(),
+                },
+
+                chunk_index: match vector.metadata.get("chunk_index") {
+                    Some(MetadataValue::Integer(index)) => *index as usize,
+                    _ => 0,
+                },
+
                 text: match vector.metadata.get("text") {
                     Some(MetadataValue::String(text)) => text.clone(),
                     _ => String::new(),

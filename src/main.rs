@@ -330,6 +330,8 @@ fn main() -> Result<(), RecallError> {
 
                 for result in results {
                     println!("{} -> {}", result.id, result.score);
+                    println!(" Document: {}", result.document_id);
+                    println!(" chunk: {}", result.chunk_index);
                     println!(" {}", result.text);
                     println!();
                 }
