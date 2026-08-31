@@ -12,7 +12,7 @@ pub fn process_document(
     embedder: &EmbeddingClient,
     database: &mut Database,
 ) -> Result<usize, RecallError> {
-    let chunks = chunk_document(document, chunk_size);
+    let chunks = chunk_document(document, chunk_size, 1);
 
     let mut inserted = 0;
 
@@ -62,7 +62,9 @@ mod tests {
     fn test_process_document() {
         let document = Document {
             id: String::from("doc_001"),
-            text: String::from("Rust is fast. Rust provides memory safety."),
+            text: String::from(
+                "Rust is a systems programming language used for fast software",
+            ),
             metadata: HashMap::new(),
         };
 
@@ -72,6 +74,6 @@ mod tests {
 
         let inserted = process_document(&document, 4, &embedder, &mut database).unwrap();
 
-        assert_eq!(inserted, 2);
+        assert_eq!(inserted, 3);
     }
 }

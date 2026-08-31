@@ -8,13 +8,26 @@ pub struct Chunk {
     pub chunk_index: usize,
 }
 
-pub fn chunk_document(document: &Document, chunk_size: usize) -> Vec<Chunk> {
+pub fn chunk_document(document: &Document, chunk_size: usize, overlap: usize) -> Vec<Chunk> {
+    if chunk_size == 0 || overlap >= chunk_size {
+        return Vec::new();
+    }
+
     let words: Vec<&str> = document.text.split_whitespace().collect();
 
     let mut chunks = Vec::new();
+    let step = chunk_size - overlap;
+    let mut start = 0;
+    let mut chunk_index = 0;
 
-    for (chunk_index, chunk_words) in words.chunks(chunk_size).enumerate() {
-        let text = chunk_words.join(" ");
+    while start < words.len() {
+        let end = usize::min(start + chunk_size, words.len());
+
+        if end - start < chunk_size && !chunks.is_empty() {
+            break;
+        }
+
+        let text = words[start..end].join(" ");
 
         chunks.push(Chunk {
             id: format!("{}_chunk_{}", document.id, chunk_index),
@@ -22,6 +35,9 @@ pub fn chunk_document(document: &Document, chunk_size: usize) -> Vec<Chunk> {
             text,
             chunk_index,
         });
+
+        chunk_index += 1;
+        start += step;
     }
 
     chunks
@@ -29,10 +45,9 @@ pub fn chunk_document(document: &Document, chunk_size: usize) -> Vec<Chunk> {
 
 #[cfg(test)]
 mod tests {
-    use crate::document;
-
     use super::*;
-    use std::{assert_eq, collections::HashMap};
+    use crate::document::Document;
+    use std::collections::HashMap;
 
     #[test]
     fn test_chunk_document() {
@@ -42,13 +57,13 @@ mod tests {
             metadata: HashMap::new(),
         };
 
-        let chunks = chunk_document(&document, 4);
+        let chunks = chunk_document(&document, 4, 1);
 
         assert_eq!(chunks.len(), 3);
 
         assert_eq!(chunks[0].text, "Rust is a systems");
-        assert_eq!(chunks[1].text, "programming language used for");
-        assert_eq!(chunks[2].text, "fast software");
+        assert_eq!(chunks[1].text, "systems programming language used");
+        assert_eq!(chunks[2].text, "used for fast software");
 
         assert_eq!(chunks[0].document_id, "doc_001");
         assert_eq!(chunks[0].chunk_index, 0);
