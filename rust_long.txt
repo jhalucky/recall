@@ -12,8 +12,4 @@ Rust is commonly used for systems programming, web services, command line tools,
 
 Concurrency is another important feature of Rust because the type system helps prevent many data races.
 
-Rust provides zero-cost abstractions while maintaining strong compile-time guarantees.
-
 Cargo is the package manager and build system used by Rust projects.
-
-Rust has a growing ecosystem of libraries called crates.

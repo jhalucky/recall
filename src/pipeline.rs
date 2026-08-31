@@ -62,9 +62,7 @@ mod tests {
     fn test_process_document() {
         let document = Document {
             id: String::from("doc_001"),
-            text: String::from(
-                "Rust is a systems programming language used for fast software",
-            ),
+            text: String::from("Rust is a systems programming language used for fast software"),
             metadata: HashMap::new(),
         };
 

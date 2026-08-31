@@ -1,0 +1,11 @@
+Python is widely used for machine learning and data science.
+
+Machine learning models learn patterns from data and can make predictions on new examples.
+
+Embeddings represent text, images, or other information as numerical vectors.
+
+Vector similarity can be used to find items that are semantically related.
+
+Neural networks are commonly used to learn useful representations from large datasets.
+
+Python has many machine learning libraries including PyTorch and scikit-learn.

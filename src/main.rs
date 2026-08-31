@@ -16,6 +16,7 @@ use std::{env, println};
 
 use crate::database::Database;
 use crate::error::RecallError;
+use crate::metadata::MetadataValue;
 use crate::vector::Vector;
 
 fn main() -> Result<(), RecallError> {
@@ -256,12 +257,14 @@ fn main() -> Result<(), RecallError> {
 
         "search-text" => {
             if args.len() < 3 {
-                println!("Usage: cargo run -- search-text <query> [--top-k N]");
+                println!("Usage: cargo run -- search-text <query> [--top-k N] [--document NAME]");
                 return Ok(());
             }
 
             let mut query_parts = Vec::new();
             let mut top_k = 3;
+            let mut document_filter: Option<String> = None;
+
             let mut i = 2;
 
             while i < args.len() {
@@ -283,6 +286,18 @@ fn main() -> Result<(), RecallError> {
                     continue;
                 }
 
+                if args[i] == "--document" {
+                    if i + 1 >= args.len() {
+                        println!("Missing document name after --document");
+                        return Ok(());
+                    }
+
+                    document_filter = Some(args[i + 1].clone());
+
+                    i += 2;
+                    continue;
+                }
+
                 query_parts.push(args[i].clone());
                 i += 1;
             }
@@ -298,42 +313,25 @@ fn main() -> Result<(), RecallError> {
 
             let query_vector = embedder.embed(&query)?;
 
-            match database.search(&query_vector, top_k) {
-                Ok(results) => {
-                    if results.is_empty() {
-                        println!("No results found.");
-                    } else {
-                        println!("Search results for: \"{}\"", query);
+            let results = match document_filter {
+                Some(document_id) => database.search_with_filter(
+                    &query_vector,
+                    top_k,
+                    "document_id",
+                    &MetadataValue::String(document_id),
+                )?,
+                None => database.search(&query_vector, top_k)?,
+            };
 
-                        for result in results {
-                            println!("{} -> {}", result.id, result.score);
-                            println!(" {}", result.text);
-                            println!();
-                        }
-                    }
-                }
+            if results.is_empty() {
+                println!("No results found.");
+            } else {
+                println!("Search results for: \"{}\"", query);
 
-                Err(RecallError::DimensionMismatch { query, stored }) => {
-                    println!(
-                        "Search failed: query has {} dimensions, stored vector has {} dimensions",
-                        query, stored
-                    );
-                }
-
-                Err(RecallError::VectorAlreadyExists) => {
-                    println!("Vector already exists.");
-                }
-
-                Err(RecallError::IoError(error)) => {
-                    println!("I/O error: {}", error);
-                }
-
-                Err(RecallError::SerializationError(error)) => {
-                    println!("Serialization error: {}", error);
-                }
-
-                Err(RecallError::ReqwestError(error)) => {
-                    println!("Embedding service error: {}", error);
+                for result in results {
+                    println!("{} -> {}", result.id, result.score);
+                    println!(" {}", result.text);
+                    println!();
                 }
             }
         }

@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 use std::fs::File;
-use std::vec;
 
 use crate::error::RecallError;
 use crate::metadata::MetadataValue;
