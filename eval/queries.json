@@ -1,0 +1,42 @@
+[
+  {
+    "query": "How does Rust provide memory safety?",
+    "expected_document": "rust_long"
+  },
+  {
+    "query": "How does Rust manage memory without garbage collection?",
+    "expected_document": "rust_long"
+  },
+  {
+    "query": "What is ownership in Rust?",
+    "expected_document": "rust_long"
+  },
+  {
+    "query": "What is borrowing in Rust?",
+    "expected_document": "rust_long"
+  },
+  {
+    "query": "Why is Rust considered a safe systems programming language?",
+    "expected_document": "rust_long"
+  },
+  {
+    "query": "What are embeddings in machine learning?",
+    "expected_document": "python_ml"
+  },
+  {
+    "query": "How does machine learning learn patterns from data?",
+    "expected_document": "python_ml"
+  },
+  {
+    "query": "What is vector similarity?",
+    "expected_document": "python_ml"
+  },
+  {
+    "query": "How are embeddings used to find related information?",
+    "expected_document": "python_ml"
+  },
+  {
+    "query": "What is machine learning used for?",
+    "expected_document": "python_ml"
+  }
+]

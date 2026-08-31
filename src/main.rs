@@ -3,6 +3,7 @@ mod database;
 mod document;
 mod embedding;
 mod error;
+mod evaluation;
 mod metadata;
 mod pipeline;
 mod search_result;
@@ -10,14 +11,88 @@ mod similarity;
 mod tokenizer;
 mod vector;
 
+use clap::{Parser, Subcommand};
 use std::collections::HashMap;
 use std::path::Path;
-use std::{env, println};
 
 use crate::database::Database;
 use crate::error::RecallError;
 use crate::metadata::MetadataValue;
 use crate::vector::Vector;
+
+#[derive(Parser, Debug)]
+#[command(name = "recall")]
+#[command(about = "A semantic document retrieval engine")]
+#[command(version)]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
+}
+
+#[derive(Subcommand, Debug)]
+enum Commands {
+    /// Search using a vector
+    Search {
+        /// Vector values
+        values: Vec<f32>,
+
+        /// Number of results to return
+        #[arg(long, default_value_t = 3)]
+        top_k: usize,
+    },
+
+    /// Search documents using natural language
+    SearchText {
+        /// Text query
+        query: String,
+
+        /// Number of results to return
+        #[arg(long, default_value_t = 3)]
+        top_k: usize,
+
+        /// Restrict search to a document
+        #[arg(long)]
+        document: Option<String>,
+    },
+
+    /// Add a document to RECALL
+    AddDocument {
+        /// Path to the document
+        path: String,
+    },
+
+    /// List indexed documents
+    ListDocuments,
+
+    /// Delete a document and all its chunks
+    DeleteDocument {
+        /// Document ID
+        document_id: String,
+    },
+
+    /// Insert a vector
+    Insert { id: String, values: Vec<f32> },
+
+    /// Get a vector
+    Get { id: String },
+
+    /// Delete a vector
+    Delete { id: String },
+
+    /// Upsert a vector
+    Upsert { id: String, values: Vec<f32> },
+
+    /// Evaluate retrieval quality
+    Eval {
+        /// Path to evaluation queries
+        #[arg(long, default_value = "eval/queries.json")]
+        queries: String,
+
+        /// Number of results considered relevant
+        #[arg(long, default_value_t = 3)]
+        top_k: usize,
+    },
+}
 
 fn main() -> Result<(), RecallError> {
     let mut database;
@@ -29,171 +104,82 @@ fn main() -> Result<(), RecallError> {
         database = Database::new();
     }
 
-    let args: Vec<String> = env::args().collect();
+    let cli = Cli::parse();
 
-    if args.len() <= 1 {
-        println!("Please provide a command.");
-        return Ok(());
-    }
-
-    match args[1].as_str() {
-        "search" => {
-            if args.len() < 3 {
-                println!("Usage: cargo run -- search <value1> <value2> ... [--top-k N]");
-                return Ok(());
-            }
-
-            let mut values = Vec::new();
-            let mut top_k = 3;
-            let mut i = 2;
-
-            while i < args.len() {
-                if args[i] == "--top-k" {
-                    if i + 1 >= args.len() {
-                        println!("Missing value after --top-k");
-                        return Ok(());
-                    }
-
-                    match args[i + 1].parse::<usize>() {
-                        Ok(k) => top_k = k,
-                        Err(_) => {
-                            println!("Invalid top-k value");
-                            return Ok(());
-                        }
-                    }
-
-                    break;
-                }
-
-                match args[i].parse::<f32>() {
-                    Ok(value) => values.push(value),
-                    Err(_) => {
-                        println!("Invalid vector value: {}", args[i]);
-                        return Ok(());
+    match cli.command {
+        Commands::Search { values, top_k } => match database.search(&values, top_k) {
+            Ok(results) => {
+                if results.is_empty() {
+                    println!("No results found.");
+                } else {
+                    for result in results {
+                        println!("{} → {}", result.id, result.score);
                     }
                 }
-
-                i += 1;
             }
 
-            let query = values;
-
-            match database.search(&query, top_k) {
-                Ok(results) => {
-                    if results.is_empty() {
-                        println!("No results found.");
-                    } else {
-                        for result in results {
-                            println!("{} → {}", result.id, result.score);
-                        }
-                    }
-                }
-
-                Err(RecallError::DimensionMismatch { query, stored }) => {
-                    println!(
-                        "Search failed: query has {} dimensions, stored vector has {} dimensions",
-                        query, stored
-                    );
-                }
-
-                Err(RecallError::VectorAlreadyExists) => {
-                    println!("Vector already exists.");
-                }
-
-                Err(RecallError::IoError(error)) => {
-                    println!("I/O error: {}", error);
-                }
-
-                Err(RecallError::SerializationError(error)) => {
-                    println!("Serialization error: {}", error);
-                }
-
-                Err(RecallError::ReqwestError(error)) => {
-                    println!("Embedding service error: {}", error);
-                }
+            Err(RecallError::DimensionMismatch { query, stored }) => {
+                println!(
+                    "Search failed: query has {} dimensions, stored vector has {} dimensions",
+                    query, stored
+                );
             }
+
+            Err(RecallError::VectorAlreadyExists) => {
+                println!("Vector already exists.");
+            }
+
+            Err(RecallError::IoError(error)) => {
+                println!("I/O error: {}", error);
+            }
+
+            Err(RecallError::SerializationError(error)) => {
+                println!("Serialization error: {}", error);
+            }
+
+            Err(RecallError::ReqwestError(error)) => {
+                println!("Embedding service error: {}", error);
+            }
+        },
+
+        Commands::Insert { id, values } => {
+            let vector = Vector {
+                id,
+                values,
+                metadata: HashMap::new(),
+            };
+
+            database.insert(vector)?;
+            database.save("recall.json")?;
+
+            println!("Vector inserted successfully.");
         }
 
-        "insert" => {
-            if args.len() < 4 {
-                println!("Usage: cargo run -- insert <id> <value1> <value2> ...");
-                return Ok(());
+        Commands::Get { id } => match database.get(&id) {
+            Some(vector) => {
+                println!("ID: {}", vector.id);
+                println!("Vector: {:?}", vector.values);
+                println!("Metadata: {:?}", vector.metadata);
             }
 
-            let id = args[2].clone();
-
-            let values: Result<Vec<f32>, _> =
-                args[3..].iter().map(|value| value.parse::<f32>()).collect();
-
-            match values {
-                Ok(values) => {
-                    let vector = Vector {
-                        id,
-                        values,
-                        metadata: HashMap::new(),
-                    };
-
-                    database.insert(vector)?;
-                    database.save("recall.json")?;
-
-                    println!("Vector inserted successfully.");
-                }
-
-                Err(error) => {
-                    println!("Invalid vector value: {}", error);
-                }
+            None => {
+                println!("Vector not found: {}", id);
             }
-        }
+        },
 
-        "get" => {
-            if args.len() < 3 {
-                println!("Usage: cargo run -- get <id>");
-                return Ok(());
+        Commands::Delete { id } => match database.delete(&id) {
+            Some(vector) => {
+                database.save("recall.json")?;
+
+                println!("Deleted vector: {}", vector.id);
             }
 
-            let id = &args[2];
-
-            match database.get(id) {
-                Some(vector) => {
-                    println!("ID: {}", vector.id);
-                    println!("Vector: {:?}", vector.values);
-                    println!("Metadata: {:?}", vector.metadata);
-                }
-
-                None => {
-                    println!("Vector not found: {}", id);
-                }
+            None => {
+                println!("Vector not found: {}", id);
             }
-        }
+        },
 
-        "delete" => {
-            if args.len() < 3 {
-                println!("Usage: cargo run -- delete <id>");
-                return Ok(());
-            }
-
-            let id = &args[2];
-
-            match database.delete(id) {
-                Some(vector) => {
-                    database.save("recall.json")?;
-                    println!("Deleted vector: {}", vector.id);
-                }
-
-                None => {
-                    println!("Vector not found: {}", id);
-                }
-            }
-        }
-
-        "delete-document" => {
-            if args.len() < 3 {
-                println!("usage: cargo run -- delete-document <document_id>");
-                return Ok(());
-            }
-
-            let document_id = &args[2];
-
+        Commands::DeleteDocument { document_id } => {
             let deleted = database
                 .delete_by_metadata("document_id", &MetadataValue::String(document_id.clone()));
 
@@ -209,7 +195,7 @@ fn main() -> Result<(), RecallError> {
             }
         }
 
-        "list-documents" => {
+        Commands::ListDocuments => {
             let documents = database.list_documents();
 
             if documents.is_empty() {
@@ -218,139 +204,49 @@ fn main() -> Result<(), RecallError> {
                 println!("Documents:");
 
                 for (document_id, chunk_count) in documents {
-                    println!("{} -> {} chunk(s)", document_id, chunk_count);
+                    println!("{} → {} chunk(s)", document_id, chunk_count);
                 }
             }
         }
 
-        "upsert" => {
-            if args.len() < 4 {
-                println!("Usage: cargo run -- upsert <id> <value1> <value2> ...");
-                return Ok(());
-            }
-
-            let id = args[2].clone();
-
-            let values: Result<Vec<f32>, _> =
-                args[3..].iter().map(|value| value.parse::<f32>()).collect();
-
-            match values {
-                Ok(values) => {
-                    let vector = Vector {
-                        id,
-                        values,
-                        metadata: HashMap::new(),
-                    };
-
-                    database.upsert(vector);
-                    database.save("recall.json")?;
-
-                    println!("Vector upserted successfully.");
-                }
-
-                Err(error) => {
-                    println!("Invalid vector value: {}", error);
-                }
-            }
-        }
-
-        "add-document" => {
-            if args.len() < 3 {
-                println!("Usage: cargo run -- add-document <file>");
-                return Ok(());
-            }
-
-            let path = &args[2];
-
-            let text = match std::fs::read_to_string(path) {
-                Ok(text) => text,
-                Err(error) => {
-                    println!("Failed to read document: {}", error);
-                    return Ok(());
-                }
-            };
-
-            let document_id = Path::new(path)
-                .file_stem()
-                .and_then(|name| name.to_str())
-                .unwrap_or("document")
-                .to_string();
-
-            let doc = document::Document {
-                id: document_id,
-                text,
+        Commands::Upsert { id, values } => {
+            let vector = Vector {
+                id,
+                values,
                 metadata: HashMap::new(),
             };
 
+            database.upsert(vector);
+            database.save("recall.json")?;
+
+            println!("Vector upserted successfully!");
+        }
+
+        Commands::AddDocument { path } => {
+            let document = document::load_from_file(&path)?;
+
             let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8000".to_string());
 
-            let inserted = pipeline::process_document(&doc, 20, &embedder, &mut database)?;
+            let inserted = pipeline::process_document(&document, 100, &embedder, &mut database)?;
 
             database.save("recall.json")?;
 
-            println!("Document added successfully.");
-            println!("Created {} vector(s).", inserted);
+            println!(
+                "Document '{}' added successfully. {} chunk(s) indexed.",
+                document.id, inserted
+            );
         }
 
-        "search-text" => {
-            if args.len() < 3 {
-                println!("Usage: cargo run -- search-text <query> [--top-k N] [--document NAME]");
-                return Ok(());
-            }
-
-            let mut query_parts = Vec::new();
-            let mut top_k = 3;
-            let mut document_filter: Option<String> = None;
-
-            let mut i = 2;
-
-            while i < args.len() {
-                if args[i] == "--top-k" {
-                    if i + 1 >= args.len() {
-                        println!("Missing value after --top-k");
-                        return Ok(());
-                    }
-
-                    match args[i + 1].parse::<usize>() {
-                        Ok(k) if k > 0 => top_k = k,
-                        _ => {
-                            println!("Invalid top-k value");
-                            return Ok(());
-                        }
-                    }
-
-                    i += 2;
-                    continue;
-                }
-
-                if args[i] == "--document" {
-                    if i + 1 >= args.len() {
-                        println!("Missing document name after --document");
-                        return Ok(());
-                    }
-
-                    document_filter = Some(args[i + 1].clone());
-
-                    i += 2;
-                    continue;
-                }
-
-                query_parts.push(args[i].clone());
-                i += 1;
-            }
-
-            if query_parts.is_empty() {
-                println!("Search query cannot be empty.");
-                return Ok(());
-            }
-
-            let query = query_parts.join(" ");
-
+        Commands::SearchText {
+            query,
+            top_k,
+            document,
+        } => {
             let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8000".to_string());
 
             let query_vector = embedder.embed(&query)?;
 
-            let results = match document_filter {
+            let results = match document {
                 Some(document_id) => database.search_with_filter(
                     &query_vector,
                     top_k,
@@ -368,15 +264,40 @@ fn main() -> Result<(), RecallError> {
                 for result in results {
                     println!("{} -> {}", result.id, result.score);
                     println!(" Document: {}", result.document_id);
-                    println!(" chunk: {}", result.chunk_index);
+                    println!(" Chunk: {}", result.chunk_index);
                     println!(" {}", result.text);
                     println!();
                 }
             }
         }
 
-        _ => {
-            println!("Unknown command: {}", args[1]);
+        Commands::Eval { queries, top_k } => {
+            let evaluation_queries = evaluation::load_queries(&queries)?;
+
+            if evaluation_queries.is_empty() {
+                println!("No evaluation queries found.");
+                return Ok(());
+            }
+
+            let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8000".to_string());
+
+            let (top_1_correct, top_k_correct) =
+                evaluation::evaluate(&database, &embedder, &evaluation_queries, top_k)?;
+
+            let total = evaluation_queries.len();
+
+            let top_1_accuracy = (top_1_correct as f32 / total as f32) * 100.0;
+
+            let top_k_accuracy = (top_k_correct as f32 / total as f32) * 100.0;
+
+            println!("RECALL Retrieval Evaluation");
+            println!();
+            println!("Queries: {}", total);
+            println!("Top-1 Accuracy: {:.1}%", top_1_accuracy);
+            println!("Top-{} Accuracy: {:.1}%", top_k, top_k_accuracy);
+            println!();
+            println!("Top-1: {}/{}", top_1_correct, total);
+            println!("Top-{}: {}/{}", top_k, top_k_correct, total);
         }
     }
 
