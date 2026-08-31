@@ -1,11 +1,12 @@
 use std::collections::HashMap;
 use std::fs::File;
 
+use crate::document;
 use crate::error::RecallError;
 use crate::metadata::MetadataValue;
 use crate::search_result::SearchResult;
 use crate::similarity::cosine_similarity;
-use crate::vector::Vector;
+use crate::vector::{self, Vector};
 
 pub struct Database {
     vectors: HashMap<String, Vector>,
@@ -33,6 +34,39 @@ impl Database {
 
     pub fn delete(&mut self, id: &str) -> Option<Vector> {
         self.vectors.remove(id)
+    }
+
+    pub fn delete_by_metadata(&mut self, key: &str, value: &MetadataValue) -> usize {
+        let ids: Vec<String> = self
+            .vectors
+            .iter()
+            .filter(|(_, vector)| vector.metadata.get(key) == Some(value))
+            .map(|(id, _)| id.clone())
+            .collect();
+
+        let deleted = ids.len();
+
+        for id in ids {
+            self.vectors.remove(&id);
+        }
+
+        deleted
+    }
+
+    pub fn list_documents(&self) -> Vec<(String, usize)> {
+        let mut documents: HashMap<String, usize> = HashMap::new();
+
+        for vector in self.vectors.values() {
+            if let Some(MetadataValue::String(document_id)) = vector.metadata.get("document_id") {
+                *documents.entry(document_id.clone()).or_insert(0) += 1;
+            }
+        }
+
+        let mut result: Vec<(String, usize)> = documents.into_iter().collect();
+
+        result.sort_by(|a, b| a.0.cmp(&b.0));
+
+        result
     }
 
     pub fn upsert(&mut self, vector: Vector) {
@@ -476,5 +510,115 @@ mod tests {
         assert_eq!(result.values, vec![1.0, 2.0, 3.0]);
 
         // std::fs::remove_file(path).unwrap();
+    }
+
+    #[test]
+    fn test_delete_by_metadata() {
+        let mut database = Database::new();
+
+        let mut metadata_1 = HashMap::new();
+        metadata_1.insert(
+            "document_id".to_string(),
+            MetadataValue::String("rust".to_string()),
+        );
+
+        let mut metadata_2 = HashMap::new();
+        metadata_2.insert(
+            "document_id".to_string(),
+            MetadataValue::String("rust".to_string()),
+        );
+
+        let mut metadata_3 = HashMap::new();
+        metadata_3.insert(
+            "document_id".to_string(),
+            MetadataValue::String("python".to_string()),
+        );
+
+        database
+            .insert(Vector {
+                id: "rust_chunk_0".to_string(),
+                values: vec![1.0, 0.0],
+                metadata: metadata_1,
+            })
+            .unwrap();
+
+        database
+            .insert(Vector {
+                id: "rust_chunk_1".to_string(),
+                values: vec![0.0, 1.0],
+                metadata: metadata_2,
+            })
+            .unwrap();
+
+        database
+            .insert(Vector {
+                id: "python_chunk_0".to_string(),
+                values: vec![1.0, 1.0],
+                metadata: metadata_3,
+            })
+            .unwrap();
+
+        let deleted =
+            database.delete_by_metadata("document_id", &MetadataValue::String("rust".to_string()));
+
+        assert_eq!(deleted, 2);
+
+        assert!(database.get("rust_chunk_0").is_none());
+        assert!(database.get("rust_chunk_1").is_none());
+        assert!(database.get("python_chunk_0").is_some());
+    }
+
+    #[test]
+    fn test_list_documents() {
+        let mut database = Database::new();
+
+        let mut rust_metadata = HashMap::new();
+        rust_metadata.insert(
+            "document_id".to_string(),
+            MetadataValue::String("rust".to_string()),
+        );
+
+        let mut rust_metadata_2 = HashMap::new();
+        rust_metadata_2.insert(
+            "document_id".to_string(),
+            MetadataValue::String("rust".to_string()),
+        );
+
+        let mut python_metadata = HashMap::new();
+        python_metadata.insert(
+            "document_id".to_string(),
+            MetadataValue::String("python".to_string()),
+        );
+
+        database
+            .insert(Vector {
+                id: "rust_chunk_0".to_string(),
+                values: vec![1.0, 0.0],
+                metadata: rust_metadata,
+            })
+            .unwrap();
+
+        database
+            .insert(Vector {
+                id: "rust_chunk_1".to_string(),
+                values: vec![0.0, 1.0],
+                metadata: rust_metadata_2,
+            })
+            .unwrap();
+
+        database
+            .insert(Vector {
+                id: "python_chunk_0".to_string(),
+                values: vec![1.0, 1.0],
+                metadata: python_metadata,
+            })
+            .unwrap();
+
+        let documents = database.list_documents();
+
+        assert_eq!(
+            documents,
+            vec![("python".to_string(), 1), ("rust".to_string(), 2),]
+        );
     }
 }

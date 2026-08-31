@@ -186,6 +186,43 @@ fn main() -> Result<(), RecallError> {
             }
         }
 
+        "delete-document" => {
+            if args.len() < 3 {
+                println!("usage: cargo run -- delete-document <document_id>");
+                return Ok(());
+            }
+
+            let document_id = &args[2];
+
+            let deleted = database
+                .delete_by_metadata("document_id", &MetadataValue::String(document_id.clone()));
+
+            if deleted == 0 {
+                println!("Document not found: {}", document_id);
+            } else {
+                database.save("recall.json")?;
+
+                println!(
+                    "Deleted document '{}' and {} chunk(s).",
+                    document_id, deleted
+                );
+            }
+        }
+
+        "list-documents" => {
+            let documents = database.list_documents();
+
+            if documents.is_empty() {
+                println!("No documents found.");
+            } else {
+                println!("Documents:");
+
+                for (document_id, chunk_count) in documents {
+                    println!("{} -> {} chunk(s)", document_id, chunk_count);
+                }
+            }
+        }
+
         "upsert" => {
             if args.len() < 4 {
                 println!("Usage: cargo run -- upsert <id> <value1> <value2> ...");

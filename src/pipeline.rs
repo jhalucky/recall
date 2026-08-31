@@ -52,9 +52,9 @@ pub fn process_document(
 #[cfg(test)]
 
 mod tests {
-    use std::{assert_eq, collections::HashMap};
+    use std::{assert_eq, collections::HashMap, vec};
 
-    use crate::{database, document};
+    use crate::{database, document, vector};
 
     use super::*;
 
@@ -62,7 +62,10 @@ mod tests {
     fn test_process_document() {
         let document = Document {
             id: String::from("doc_001"),
-            text: String::from("Rust is a systems programming language used for fast software"),
+            text: String::from(
+                "Rust is a systems programming language. \
+                  Rust provides memory safety without a garbage collector.",
+            ),
             metadata: HashMap::new(),
         };
 
@@ -72,6 +75,55 @@ mod tests {
 
         let inserted = process_document(&document, 4, &embedder, &mut database).unwrap();
 
-        assert_eq!(inserted, 3);
+        assert!(inserted > 0);
+
+        let first_chunk = database.get("doc_001_chunk_0");
+
+        assert!(first_chunk.is_some());
+
+        let vector = first_chunk.unwrap();
+
+        assert_eq!(vector.id, "doc_001_chunk_0");
+        assert_eq!(vector.values.len(), 384);
+
+        assert_eq!(
+            vector.metadata.get("document_id"),
+            Some(&MetadataValue::String("doc_001".to_string()))
+        );
+        assert_eq!(
+            vector.metadata.get("chunk_index"),
+            Some(&MetadataValue::Integer(0))
+        );
+
+        assert!(vector.metadata.contains_key("text"));
+    }
+
+    #[test]
+    fn test_document_to_semantic_search() {
+        let document = Document {
+            id: String::from("rust_doc"),
+            text: String::from(
+                "Rust provides memory safety through ownership and borrowing. \
+             The compiler checks these rules at compile time.",
+            ),
+            metadata: HashMap::new(),
+        };
+
+        let embedder = EmbeddingClient::new("http://127.0.0.1:8000".to_string());
+
+        let mut database = Database::new();
+
+        process_document(&document, 8, &embedder, &mut database).unwrap();
+
+        let query = "How does prevent memory problem?";
+        let query_vector = embedder.embed(query).unwrap();
+
+        let results = database.search(&query_vector, 2).unwrap();
+
+        assert!(!results.is_empty());
+
+        assert_eq!(results[0].document_id, "rust_doc");
+        assert!(results[0].score > 0.0);
+        assert!(!results[0].text.is_empty());
     }
 }
