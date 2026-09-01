@@ -282,7 +282,7 @@ fn main() -> Result<(), RecallError> {
             let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8000".to_string());
 
             let (top_1_correct, top_k_correct) =
-                evaluation::evaluate(&database, &embedder, &evaluation_queries, top_k)?;
+                evaluation::evaluate_detailed(&database, &embedder, &evaluation_queries, top_k)?;
 
             let total = evaluation_queries.len();
 
