@@ -1,42 +1,170 @@
 [
   {
-    "query": "How does Rust provide memory safety?",
-    "expected_document": "rust_long"
+    "query": "How does Rust prevent unsafe memory access?",
+    "relevant_chunks": ["rust_chunk_0", "rust_long_chunk_0"]
   },
   {
-    "query": "How does Rust manage memory without garbage collection?",
-    "expected_document": "rust_long"
+    "query": "How does Rust manage memory without a garbage collector?",
+    "relevant_chunks": ["rust_chunk_0", "rust_long_chunk_0"]
   },
   {
-    "query": "What is ownership in Rust?",
-    "expected_document": "rust_long"
+    "query": "What mechanism controls memory ownership in Rust?",
+    "relevant_chunks": ["rust_long_chunk_0"]
   },
   {
-    "query": "What is borrowing in Rust?",
-    "expected_document": "rust_long"
+    "query": "How can Rust programs reference data without taking ownership?",
+    "relevant_chunks": ["rust_long_chunk_0"]
   },
   {
-    "query": "Why is Rust considered a safe systems programming language?",
-    "expected_document": "rust_long"
+    "query": "Why is Rust suitable for systems programming?",
+    "relevant_chunks": ["rust_chunk_0", "rust_long_chunk_0"]
   },
   {
-    "query": "What are embeddings in machine learning?",
-    "expected_document": "python_ml"
+    "query": "What are embeddings used for?",
+    "relevant_chunks": ["python_ml_chunk_1"]
   },
   {
-    "query": "How does machine learning learn patterns from data?",
-    "expected_document": "python_ml"
+    "query": "How are information representations converted into numerical vectors?",
+    "relevant_chunks": ["python_ml_chunk_1"]
   },
   {
-    "query": "What is vector similarity?",
-    "expected_document": "python_ml"
+    "query": "How can similar pieces of information be found using vectors?",
+    "relevant_chunks": ["python_ml_chunk_1", "python_ml_chunk_2"]
   },
   {
-    "query": "How are embeddings used to find related information?",
-    "expected_document": "python_ml"
+    "query": "How do machine learning models discover patterns?",
+    "relevant_chunks": ["python_ml_chunk_0"]
   },
   {
-    "query": "What is machine learning used for?",
-    "expected_document": "python_ml"
+    "query": "What can machine learning models learn from data?",
+    "relevant_chunks": ["python_ml_chunk_0"]
+  },
+  {
+    "query": "How does an operating system manage running programs?",
+    "relevant_chunks": ["linux_chunk_0", "operating_systems_chunk_0"]
+  },
+  {
+    "query": "How does an operating system decide which process gets CPU time?",
+    "relevant_chunks": ["linux_chunk_0", "operating_systems_chunk_0"]
+  },
+  {
+    "query": "What happens when a memory page is not available in physical memory?",
+    "relevant_chunks": ["operating_systems_chunk_0"]
+  },
+  {
+    "query": "How are virtual addresses converted into physical addresses?",
+    "relevant_chunks": ["operating_systems_chunk_0"]
+  },
+  {
+    "query": "What allows applications to request services from the operating system?",
+    "relevant_chunks": ["operating_systems_chunk_0"]
+  },
+  {
+    "query": "Why are device drivers needed?",
+    "relevant_chunks": ["operating_systems_chunk_0", "linux_chunk_0"]
+  },
+  {
+    "query": "How does an operating system distribute processor time?",
+    "relevant_chunks": ["linux_chunk_0", "operating_systems_chunk_0"]
+  },
+  {
+    "query": "What is a process in an operating system?",
+    "relevant_chunks": ["linux_chunk_0", "operating_systems_chunk_0"]
+  },
+  {
+    "query": "How can a database make queries faster?",
+    "relevant_chunks": ["databases_chunk_0", "databases_chunk_1"]
+  },
+  {
+    "query": "What is the purpose of a database index?",
+    "relevant_chunks": ["databases_chunk_0"]
+  },
+  {
+    "query": "How are related tables connected in a relational database?",
+    "relevant_chunks": ["databases_chunk_0"]
+  },
+  {
+    "query": "What guarantees do database transactions provide?",
+    "relevant_chunks": ["databases_chunk_0", "databases_chunk_1"]
+  },
+  {
+    "query": "What does ACID mean in databases?",
+    "relevant_chunks": ["databases_chunk_1"]
+  },
+  {
+    "query": "How does database normalization reduce duplication?",
+    "relevant_chunks": ["databases_chunk_1"]
+  },
+  {
+    "query": "How can a database recover from accidental data loss?",
+    "relevant_chunks": ["databases_chunk_1"]
+  },
+  {
+    "query": "How can database systems improve performance?",
+    "relevant_chunks": ["databases_chunk_0", "databases_chunk_1"]
+  },
+  {
+    "query": "What translates domain names into IP addresses?",
+    "relevant_chunks": ["networking_chunk_0"]
+  },
+  {
+    "query": "How are domain names converted into network addresses?",
+    "relevant_chunks": ["networking_chunk_0"]
+  },
+  {
+    "query": "What protocol provides reliable ordered delivery?",
+    "relevant_chunks": ["networking_chunk_0"]
+  },
+  {
+    "query": "What is the difference between TCP and UDP?",
+    "relevant_chunks": ["networking_chunk_0"]
+  },
+  {
+    "query": "What does HTTPS add to HTTP?",
+    "relevant_chunks": ["networking_chunk_0"]
+  },
+  {
+    "query": "What device forwards packets between networks?",
+    "relevant_chunks": ["networking_chunk_0"]
+  },
+  {
+    "query": "What does network latency measure?",
+    "relevant_chunks": ["networking_chunk_0"]
+  },
+  {
+    "query": "Which tools can help diagnose network connectivity problems?",
+    "relevant_chunks": ["networking_chunk_0"]
+  },
+  {
+    "query": "How can developers temporarily save uncommitted changes?",
+    "relevant_chunks": ["git_chunk_1", "git_chunk_2"]
+  },
+  {
+    "query": "How can developers work on features without changing the main development line?",
+    "relevant_chunks": ["git_chunk_1"]
+  },
+  {
+    "query": "What does a Git commit represent?",
+    "relevant_chunks": ["git_chunk_0"]
+  },
+  {
+    "query": "What is the purpose of the Git staging area?",
+    "relevant_chunks": ["git_chunk_0"]
+  },
+  {
+    "query": "How are changes from different Git branches combined?",
+    "relevant_chunks": ["git_chunk_1"]
+  },
+  {
+    "query": "What causes a Git merge conflict?",
+    "relevant_chunks": ["git_chunk_1"]
+  },
+  {
+    "query": "How can developers download remote Git changes without modifying the current branch?",
+    "relevant_chunks": ["git_chunk_1"]
+  },
+  {
+    "query": "How can someone inspect differences between versions of files?",
+    "relevant_chunks": ["git_chunk_2"]
   }
 ]

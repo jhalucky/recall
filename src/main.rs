@@ -14,6 +14,7 @@ mod vector;
 use clap::{Parser, Subcommand};
 use std::collections::HashMap;
 use std::path::Path;
+use std::println;
 
 use crate::database::Database;
 use crate::error::RecallError;
@@ -281,7 +282,7 @@ fn main() -> Result<(), RecallError> {
 
             let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8000".to_string());
 
-            let (top_1_correct, top_k_correct) =
+            let (top_1_correct, top_k_correct, mrr) =
                 evaluation::evaluate_detailed(&database, &embedder, &evaluation_queries, top_k)?;
 
             let total = evaluation_queries.len();
@@ -290,6 +291,8 @@ fn main() -> Result<(), RecallError> {
 
             let top_k_accuracy = (top_k_correct as f32 / total as f32) * 100.0;
 
+            println!();
+            println!("MRR: {:.3}", mrr);
             println!("RECALL Retrieval Evaluation");
             println!();
             println!("Queries: {}", total);

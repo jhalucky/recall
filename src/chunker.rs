@@ -22,12 +22,9 @@ pub fn chunk_document(document: &Document, chunk_size: usize, overlap: usize) ->
 
     while start < words.len() {
         let end = usize::min(start + chunk_size, words.len());
+        let chunk_words = &words[start..end];
 
-        if end - start < chunk_size && !chunks.is_empty() {
-            break;
-        }
-
-        let text = words[start..end].join(" ");
+        let text = chunk_words.join(" ");
 
         chunks.push(Chunk {
             id: format!("{}_chunk_{}", document.id, chunk_index),
@@ -59,15 +56,17 @@ mod tests {
 
         let chunks = chunk_document(&document, 4, 1);
 
-        assert_eq!(chunks.len(), 3);
+        assert_eq!(chunks.len(), 4);
 
         assert_eq!(chunks[0].text, "Rust is a systems");
         assert_eq!(chunks[1].text, "systems programming language used");
         assert_eq!(chunks[2].text, "used for fast software");
+        assert_eq!(chunks[3].text, "software");
 
         assert_eq!(chunks[0].document_id, "doc_001");
         assert_eq!(chunks[0].chunk_index, 0);
         assert_eq!(chunks[1].chunk_index, 1);
         assert_eq!(chunks[2].chunk_index, 2);
+        assert_eq!(chunks[3].chunk_index, 3);
     }
 }
