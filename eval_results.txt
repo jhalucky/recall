@@ -3,8 +3,8 @@ Query 1/42
 Query: How does Rust prevent unsafe memory access?
 Relevant chunks: ["rust_chunk_0", "rust_long_chunk_0"]
 
-1. ✓ rust_chunk_0 -> 0.782047
-  Rust is a systems programming language focused on safety and performance. Rust provides memory safety without requiring a garbage collector.
+1. ✓ rust_chunk_0 -> 0.725661
+  Rust is a systems programming language focused on safety and performance. Rust provides memory safety without requiring a garbage collector. The language is useful for building fast and reliable software.
 2. ✓ rust_long_chunk_0 -> 0.693940
   Rust is a systems programming language focused on safety and performance. Rust provides memory safety without requiring a garbage collector. Ownership is one of the core concepts in Rust and controls how memory is managed. Borrowing allows Rust programs to reference data without taking ownership. The Rust compiler checks ownership and borrowing rules at compile time. Rust is commonly used for systems programming, web services, command line tools, and embedded software. Concurrency is another important feature of Rust because the type system helps prevent many data races. Cargo is the package manager and build system used by Rust projects.
 3.   operating_systems_chunk_1 -> 0.362419
@@ -15,8 +15,8 @@ Query 2/42
 Query: How does Rust manage memory without a garbage collector?
 Relevant chunks: ["rust_chunk_0", "rust_long_chunk_0"]
 
-1. ✓ rust_chunk_0 -> 0.740576
-  Rust is a systems programming language focused on safety and performance. Rust provides memory safety without requiring a garbage collector.
+1. ✓ rust_chunk_0 -> 0.663722
+  Rust is a systems programming language focused on safety and performance. Rust provides memory safety without requiring a garbage collector. The language is useful for building fast and reliable software.
 2. ✓ rust_long_chunk_0 -> 0.655860
   Rust is a systems programming language focused on safety and performance. Rust provides memory safety without requiring a garbage collector. Ownership is one of the core concepts in Rust and controls how memory is managed. Borrowing allows Rust programs to reference data without taking ownership. The Rust compiler checks ownership and borrowing rules at compile time. Rust is commonly used for systems programming, web services, command line tools, and embedded software. Concurrency is another important feature of Rust because the type system helps prevent many data races. Cargo is the package manager and build system used by Rust projects.
 3.   operating_systems_chunk_0 -> 0.395257
@@ -29,8 +29,8 @@ Relevant chunks: ["rust_long_chunk_0"]
 
 1. ✓ rust_long_chunk_0 -> 0.715682
   Rust is a systems programming language focused on safety and performance. Rust provides memory safety without requiring a garbage collector. Ownership is one of the core concepts in Rust and controls how memory is managed. Borrowing allows Rust programs to reference data without taking ownership. The Rust compiler checks ownership and borrowing rules at compile time. Rust is commonly used for systems programming, web services, command line tools, and embedded software. Concurrency is another important feature of Rust because the type system helps prevent many data races. Cargo is the package manager and build system used by Rust projects.
-2.   rust_chunk_0 -> 0.688559
-  Rust is a systems programming language focused on safety and performance. Rust provides memory safety without requiring a garbage collector.
+2.   rust_chunk_0 -> 0.636521
+  Rust is a systems programming language focused on safety and performance. Rust provides memory safety without requiring a garbage collector. The language is useful for building fast and reliable software.
 3.   operating_systems_chunk_0 -> 0.396123
   An operating system manages computer hardware and provides services that allow application programs to run. The operating system manages processes, memory, storage, devices, and security. A process is a program that is currently executing. The operating system scheduler determines which process receives CPU time. Processes can move between states such as ready, running, and waiting. Context switching allows the CPU to move from one process to another. Virtual memory gives processes the appearance of having a large private memory space. Memory pages can be mapped to physical memory or stored on disk when necessary. A page fault occurs when a
 Result: ✓ Top-1 correct
@@ -41,8 +41,8 @@ Relevant chunks: ["rust_long_chunk_0"]
 
 1. ✓ rust_long_chunk_0 -> 0.681961
   Rust is a systems programming language focused on safety and performance. Rust provides memory safety without requiring a garbage collector. Ownership is one of the core concepts in Rust and controls how memory is managed. Borrowing allows Rust programs to reference data without taking ownership. The Rust compiler checks ownership and borrowing rules at compile time. Rust is commonly used for systems programming, web services, command line tools, and embedded software. Concurrency is another important feature of Rust because the type system helps prevent many data races. Cargo is the package manager and build system used by Rust projects.
-2.   rust_chunk_0 -> 0.569742
-  Rust is a systems programming language focused on safety and performance. Rust provides memory safety without requiring a garbage collector.
+2.   rust_chunk_0 -> 0.550358
+  Rust is a systems programming language focused on safety and performance. Rust provides memory safety without requiring a garbage collector. The language is useful for building fast and reliable software.
 3.   operating_systems_chunk_1 -> 0.317107
   a process accesses a page that is not currently available in physical memory. The operating system uses page tables to translate virtual addresses into physical addresses. File systems organize persistent data into files and directories. Device drivers allow the operating system to communicate with hardware devices. System calls provide an interface through which applications request services from the operating system. Applications can use system calls to open files, create processes, allocate memory, and communicate with devices. User mode restricts applications from directly performing privileged operations. Kernel mode allows the operating system to perform privileged operations. Interrupts allow hardware devices to
 Result: ✓ Top-1 correct
@@ -51,72 +51,72 @@ Query 5/42
 Query: Why is Rust suitable for systems programming?
 Relevant chunks: ["rust_chunk_0", "rust_long_chunk_0"]
 
-1. ✓ rust_chunk_0 -> 0.797010
-  Rust is a systems programming language focused on safety and performance. Rust provides memory safety without requiring a garbage collector.
+1. ✓ rust_chunk_0 -> 0.819120
+  Rust is a systems programming language focused on safety and performance. Rust provides memory safety without requiring a garbage collector. The language is useful for building fast and reliable software.
 2. ✓ rust_long_chunk_0 -> 0.757509
   Rust is a systems programming language focused on safety and performance. Rust provides memory safety without requiring a garbage collector. Ownership is one of the core concepts in Rust and controls how memory is managed. Borrowing allows Rust programs to reference data without taking ownership. The Rust compiler checks ownership and borrowing rules at compile time. Rust is commonly used for systems programming, web services, command line tools, and embedded software. Concurrency is another important feature of Rust because the type system helps prevent many data races. Cargo is the package manager and build system used by Rust projects.
-3.   linux_chunk_0 -> 0.331927
-  Linux is an operating system kernel used by many different operating systems and distributions. Linux is widely used on servers, personal computers, embedded devices, and cloud infrastructure. The Linux kernel manages hardware resources and provides essential services to applications. Processes are running programs managed by the operating system. Linux uses virtual memory to give processes an isolated address space. The scheduler decides which processes receive CPU time. Filesystems organize data stored on disks and other storage devices. Linux supports many filesystems including ext4 and XFS. The command line is an important part of Linux administration. Common commands include ls, cd,
+3.   operating_systems_chunk_2 -> 0.371136
+  to notify the processor that an event requires attention. The operating system also provides mechanisms for processes to communicate and synchronize. Threads allow multiple execution paths to exist within a process. Locks and other synchronization mechanisms help protect shared data from concurrent access. Deadlocks can occur when processes wait indefinitely for resources held by each other. Operating systems use scheduling algorithms to decide how CPU time is distributed. Common scheduling approaches include first-come-first-served, shortest-job-first, priority scheduling, and round-robin scheduling. Operating systems also provide security mechanisms for controlling access to files, processes, memory, and hardware resources.
 Result: ✓ Top-1 correct
 
 Query 6/42
 Query: What are embeddings used for?
 Relevant chunks: ["python_ml_chunk_1"]
 
-1. ✓ python_ml_chunk_1 -> 0.595458
-  make predictions on new examples. Embeddings represent text, images, or other information as numerical vectors. Vector similarity can be used
-2.   python_ml_chunk_2 -> 0.434468
-  used to find items that are semantically related. Neural networks are commonly used to learn useful representations from large datasets.
-3.   networking_chunk_0 -> 0.283579
+1.   python_ml_chunk_0 -> 0.380980
+  Python is widely used for machine learning and data science. Machine learning models learn patterns from data and can make predictions on new examples. Embeddings represent text, images, or other information as numerical vectors. Vector similarity can be used to find items that are semantically related. Neural networks are commonly used to learn useful representations from large datasets. Python has many machine learning libraries including PyTorch and scikit-learn.
+2.   networking_chunk_0 -> 0.283579
   Computer networking allows devices to communicate and exchange information. A network can connect computers within a local area or across the internet. IP addresses identify network interfaces and allow packets to be routed between networks. IPv4 uses 32-bit addresses while IPv6 uses 128-bit addresses. TCP provides reliable, ordered delivery of data between applications. TCP uses connections and retransmission to handle lost packets. UDP provides a simpler connectionless transport mechanism without guaranteeing delivery. DNS translates human-readable domain names into IP addresses. HTTP is an application protocol commonly used to transfer web resources. HTTPS adds encryption and authentication to HTTP using TLS.
-Result: ✓ Top-1 correct
+3.   databases_chunk_2 -> 0.247666
+  hardware.
+Result: ✗ Relevant chunk not found
 
 Query 7/42
 Query: How are information representations converted into numerical vectors?
 Relevant chunks: ["python_ml_chunk_1"]
 
-1. ✓ python_ml_chunk_1 -> 0.543257
-  make predictions on new examples. Embeddings represent text, images, or other information as numerical vectors. Vector similarity can be used
-2.   python_ml_chunk_2 -> 0.391090
-  used to find items that are semantically related. Neural networks are commonly used to learn useful representations from large datasets.
-3.   operating_systems_chunk_1 -> 0.241243
+1.   python_ml_chunk_0 -> 0.330899
+  Python is widely used for machine learning and data science. Machine learning models learn patterns from data and can make predictions on new examples. Embeddings represent text, images, or other information as numerical vectors. Vector similarity can be used to find items that are semantically related. Neural networks are commonly used to learn useful representations from large datasets. Python has many machine learning libraries including PyTorch and scikit-learn.
+2.   operating_systems_chunk_1 -> 0.241243
   a process accesses a page that is not currently available in physical memory. The operating system uses page tables to translate virtual addresses into physical addresses. File systems organize persistent data into files and directories. Device drivers allow the operating system to communicate with hardware devices. System calls provide an interface through which applications request services from the operating system. Applications can use system calls to open files, create processes, allocate memory, and communicate with devices. User mode restricts applications from directly performing privileged operations. Kernel mode allows the operating system to perform privileged operations. Interrupts allow hardware devices to
-Result: ✓ Top-1 correct
+3.   networking_chunk_0 -> 0.182349
+  Computer networking allows devices to communicate and exchange information. A network can connect computers within a local area or across the internet. IP addresses identify network interfaces and allow packets to be routed between networks. IPv4 uses 32-bit addresses while IPv6 uses 128-bit addresses. TCP provides reliable, ordered delivery of data between applications. TCP uses connections and retransmission to handle lost packets. UDP provides a simpler connectionless transport mechanism without guaranteeing delivery. DNS translates human-readable domain names into IP addresses. HTTP is an application protocol commonly used to transfer web resources. HTTPS adds encryption and authentication to HTTP using TLS.
+Result: ✗ Relevant chunk not found
 
 Query 8/42
 Query: How can similar pieces of information be found using vectors?
 Relevant chunks: ["python_ml_chunk_1", "python_ml_chunk_2"]
 
-1. ✓ python_ml_chunk_1 -> 0.573070
-  make predictions on new examples. Embeddings represent text, images, or other information as numerical vectors. Vector similarity can be used
-2. ✓ python_ml_chunk_2 -> 0.425273
-  used to find items that are semantically related. Neural networks are commonly used to learn useful representations from large datasets.
-3.   databases_chunk_0 -> 0.239050
+1.   python_ml_chunk_0 -> 0.382402
+  Python is widely used for machine learning and data science. Machine learning models learn patterns from data and can make predictions on new examples. Embeddings represent text, images, or other information as numerical vectors. Vector similarity can be used to find items that are semantically related. Neural networks are commonly used to learn useful representations from large datasets. Python has many machine learning libraries including PyTorch and scikit-learn.
+2.   databases_chunk_0 -> 0.239050
   A database is a system for storing and retrieving structured information. Relational databases organize information into tables containing rows and columns. Each row represents a record and each column represents an attribute. SQL is commonly used to query relational databases. A primary key uniquely identifies a row in a table. Foreign keys establish relationships between tables. Database indexes improve query performance by providing efficient ways to locate records. An index can reduce the amount of data that a database needs to examine during a query. Transactions allow multiple database operations to be treated as a single unit of work. Transactions
-Result: ✓ Top-1 correct
+3.   rust_long_chunk_0 -> 0.147364
+  Rust is a systems programming language focused on safety and performance. Rust provides memory safety without requiring a garbage collector. Ownership is one of the core concepts in Rust and controls how memory is managed. Borrowing allows Rust programs to reference data without taking ownership. The Rust compiler checks ownership and borrowing rules at compile time. Rust is commonly used for systems programming, web services, command line tools, and embedded software. Concurrency is another important feature of Rust because the type system helps prevent many data races. Cargo is the package manager and build system used by Rust projects.
+Result: ✗ Relevant chunk not found
 
 Query 9/42
 Query: How do machine learning models discover patterns?
 Relevant chunks: ["python_ml_chunk_0"]
 
-1. ✓ python_ml_chunk_0 -> 0.579719
-  Python is widely used for machine learning and data science. Machine learning models learn patterns from data and can make
-2.   python_ml_chunk_2 -> 0.426947
-  used to find items that are semantically related. Neural networks are commonly used to learn useful representations from large datasets.
-3.   python_ml_chunk_1 -> 0.309599
-  make predictions on new examples. Embeddings represent text, images, or other information as numerical vectors. Vector similarity can be used
+1. ✓ python_ml_chunk_0 -> 0.433762
+  Python is widely used for machine learning and data science. Machine learning models learn patterns from data and can make predictions on new examples. Embeddings represent text, images, or other information as numerical vectors. Vector similarity can be used to find items that are semantically related. Neural networks are commonly used to learn useful representations from large datasets. Python has many machine learning libraries including PyTorch and scikit-learn.
+2.   databases_chunk_0 -> 0.165944
+  A database is a system for storing and retrieving structured information. Relational databases organize information into tables containing rows and columns. Each row represents a record and each column represents an attribute. SQL is commonly used to query relational databases. A primary key uniquely identifies a row in a table. Foreign keys establish relationships between tables. Database indexes improve query performance by providing efficient ways to locate records. An index can reduce the amount of data that a database needs to examine during a query. Transactions allow multiple database operations to be treated as a single unit of work. Transactions
+3.   operating_systems_chunk_2 -> 0.121609
+  to notify the processor that an event requires attention. The operating system also provides mechanisms for processes to communicate and synchronize. Threads allow multiple execution paths to exist within a process. Locks and other synchronization mechanisms help protect shared data from concurrent access. Deadlocks can occur when processes wait indefinitely for resources held by each other. Operating systems use scheduling algorithms to decide how CPU time is distributed. Common scheduling approaches include first-come-first-served, shortest-job-first, priority scheduling, and round-robin scheduling. Operating systems also provide security mechanisms for controlling access to files, processes, memory, and hardware resources.
 Result: ✓ Top-1 correct
 
 Query 10/42
 Query: What can machine learning models learn from data?
 Relevant chunks: ["python_ml_chunk_0"]
 
-1. ✓ python_ml_chunk_0 -> 0.569454
-  Python is widely used for machine learning and data science. Machine learning models learn patterns from data and can make
-2.   python_ml_chunk_2 -> 0.485980
-  used to find items that are semantically related. Neural networks are commonly used to learn useful representations from large datasets.
-3.   python_ml_chunk_1 -> 0.432015
-  make predictions on new examples. Embeddings represent text, images, or other information as numerical vectors. Vector similarity can be used
+1. ✓ python_ml_chunk_0 -> 0.517755
+  Python is widely used for machine learning and data science. Machine learning models learn patterns from data and can make predictions on new examples. Embeddings represent text, images, or other information as numerical vectors. Vector similarity can be used to find items that are semantically related. Neural networks are commonly used to learn useful representations from large datasets. Python has many machine learning libraries including PyTorch and scikit-learn.
+2.   databases_chunk_2 -> 0.241333
+  hardware.
+3.   databases_chunk_0 -> 0.231468
+  A database is a system for storing and retrieving structured information. Relational databases organize information into tables containing rows and columns. Each row represents a record and each column represents an attribute. SQL is commonly used to query relational databases. A primary key uniquely identifies a row in a table. Foreign keys establish relationships between tables. Database indexes improve query performance by providing efficient ways to locate records. An index can reduce the amount of data that a database needs to examine during a query. Transactions allow multiple database operations to be treated as a single unit of work. Transactions
 Result: ✓ Top-1 correct
 
 Query 11/42
@@ -125,23 +125,23 @@ Relevant chunks: ["linux_chunk_0", "operating_systems_chunk_0"]
 
 1. ✓ operating_systems_chunk_0 -> 0.669016
   An operating system manages computer hardware and provides services that allow application programs to run. The operating system manages processes, memory, storage, devices, and security. A process is a program that is currently executing. The operating system scheduler determines which process receives CPU time. Processes can move between states such as ready, running, and waiting. Context switching allows the CPU to move from one process to another. Virtual memory gives processes the appearance of having a large private memory space. Memory pages can be mapped to physical memory or stored on disk when necessary. A page fault occurs when a
-2. ✓ linux_chunk_0 -> 0.554868
-  Linux is an operating system kernel used by many different operating systems and distributions. Linux is widely used on servers, personal computers, embedded devices, and cloud infrastructure. The Linux kernel manages hardware resources and provides essential services to applications. Processes are running programs managed by the operating system. Linux uses virtual memory to give processes an isolated address space. The scheduler decides which processes receive CPU time. Filesystems organize data stored on disks and other storage devices. Linux supports many filesystems including ext4 and XFS. The command line is an important part of Linux administration. Common commands include ls, cd,
-3.   operating_systems_chunk_1 -> 0.527473
-  a process accesses a page that is not currently available in physical memory. The operating system uses page tables to translate virtual addresses into physical addresses. File systems organize persistent data into files and directories. Device drivers allow the operating system to communicate with hardware devices. System calls provide an interface through which applications request services from the operating system. Applications can use system calls to open files, create processes, allocate memory, and communicate with devices. User mode restricts applications from directly performing privileged operations. Kernel mode allows the operating system to perform privileged operations. Interrupts allow hardware devices to
+2.   linux_chunk_1 -> 0.578812
+  cd, cp, mv, and grep. Permissions control which users can read, write, or execute files. Linux uses users and groups to manage access to system resources. The root user has extensive privileges over the system. Services can run in the background and provide functionality such as networking or web hosting. System logs help administrators diagnose problems. Linux networking provides tools for inspecting interfaces, routes, and connections. Shell scripts can automate repetitive administrative tasks. Package managers are used to install and update software. Linux distributions combine the kernel with utilities, libraries, package managers, and applications.
+3.   operating_systems_chunk_2 -> 0.565640
+  to notify the processor that an event requires attention. The operating system also provides mechanisms for processes to communicate and synchronize. Threads allow multiple execution paths to exist within a process. Locks and other synchronization mechanisms help protect shared data from concurrent access. Deadlocks can occur when processes wait indefinitely for resources held by each other. Operating systems use scheduling algorithms to decide how CPU time is distributed. Common scheduling approaches include first-come-first-served, shortest-job-first, priority scheduling, and round-robin scheduling. Operating systems also provide security mechanisms for controlling access to files, processes, memory, and hardware resources.
 Result: ✓ Top-1 correct
 
 Query 12/42
 Query: How does an operating system decide which process gets CPU time?
 Relevant chunks: ["linux_chunk_0", "operating_systems_chunk_0"]
 
-1. ✓ operating_systems_chunk_0 -> 0.573246
+1.   operating_systems_chunk_2 -> 0.599533
+  to notify the processor that an event requires attention. The operating system also provides mechanisms for processes to communicate and synchronize. Threads allow multiple execution paths to exist within a process. Locks and other synchronization mechanisms help protect shared data from concurrent access. Deadlocks can occur when processes wait indefinitely for resources held by each other. Operating systems use scheduling algorithms to decide how CPU time is distributed. Common scheduling approaches include first-come-first-served, shortest-job-first, priority scheduling, and round-robin scheduling. Operating systems also provide security mechanisms for controlling access to files, processes, memory, and hardware resources.
+2. ✓ operating_systems_chunk_0 -> 0.573246
   An operating system manages computer hardware and provides services that allow application programs to run. The operating system manages processes, memory, storage, devices, and security. A process is a program that is currently executing. The operating system scheduler determines which process receives CPU time. Processes can move between states such as ready, running, and waiting. Context switching allows the CPU to move from one process to another. Virtual memory gives processes the appearance of having a large private memory space. Memory pages can be mapped to physical memory or stored on disk when necessary. A page fault occurs when a
-2. ✓ linux_chunk_0 -> 0.442167
+3. ✓ linux_chunk_0 -> 0.442167
   Linux is an operating system kernel used by many different operating systems and distributions. Linux is widely used on servers, personal computers, embedded devices, and cloud infrastructure. The Linux kernel manages hardware resources and provides essential services to applications. Processes are running programs managed by the operating system. Linux uses virtual memory to give processes an isolated address space. The scheduler decides which processes receive CPU time. Filesystems organize data stored on disks and other storage devices. Linux supports many filesystems including ext4 and XFS. The command line is an important part of Linux administration. Common commands include ls, cd,
-3.   operating_systems_chunk_1 -> 0.399278
-  a process accesses a page that is not currently available in physical memory. The operating system uses page tables to translate virtual addresses into physical addresses. File systems organize persistent data into files and directories. Device drivers allow the operating system to communicate with hardware devices. System calls provide an interface through which applications request services from the operating system. Applications can use system calls to open files, create processes, allocate memory, and communicate with devices. User mode restricts applications from directly performing privileged operations. Kernel mode allows the operating system to perform privileged operations. Interrupts allow hardware devices to
-Result: ✓ Top-1 correct
+Result: ~ Relevant chunk found in Top-3
 
 Query 13/42
 Query: What happens when a memory page is not available in physical memory?
@@ -151,8 +151,8 @@ Relevant chunks: ["operating_systems_chunk_0"]
   An operating system manages computer hardware and provides services that allow application programs to run. The operating system manages processes, memory, storage, devices, and security. A process is a program that is currently executing. The operating system scheduler determines which process receives CPU time. Processes can move between states such as ready, running, and waiting. Context switching allows the CPU to move from one process to another. Virtual memory gives processes the appearance of having a large private memory space. Memory pages can be mapped to physical memory or stored on disk when necessary. A page fault occurs when a
 2.   operating_systems_chunk_1 -> 0.469751
   a process accesses a page that is not currently available in physical memory. The operating system uses page tables to translate virtual addresses into physical addresses. File systems organize persistent data into files and directories. Device drivers allow the operating system to communicate with hardware devices. System calls provide an interface through which applications request services from the operating system. Applications can use system calls to open files, create processes, allocate memory, and communicate with devices. User mode restricts applications from directly performing privileged operations. Kernel mode allows the operating system to perform privileged operations. Interrupts allow hardware devices to
-3.   rust_chunk_0 -> 0.228648
-  Rust is a systems programming language focused on safety and performance. Rust provides memory safety without requiring a garbage collector.
+3.   databases_chunk_2 -> 0.280509
+  hardware.
 Result: ✓ Top-1 correct
 
 Query 14/42
@@ -175,8 +175,8 @@ Relevant chunks: ["operating_systems_chunk_0"]
   a process accesses a page that is not currently available in physical memory. The operating system uses page tables to translate virtual addresses into physical addresses. File systems organize persistent data into files and directories. Device drivers allow the operating system to communicate with hardware devices. System calls provide an interface through which applications request services from the operating system. Applications can use system calls to open files, create processes, allocate memory, and communicate with devices. User mode restricts applications from directly performing privileged operations. Kernel mode allows the operating system to perform privileged operations. Interrupts allow hardware devices to
 2. ✓ operating_systems_chunk_0 -> 0.534644
   An operating system manages computer hardware and provides services that allow application programs to run. The operating system manages processes, memory, storage, devices, and security. A process is a program that is currently executing. The operating system scheduler determines which process receives CPU time. Processes can move between states such as ready, running, and waiting. Context switching allows the CPU to move from one process to another. Virtual memory gives processes the appearance of having a large private memory space. Memory pages can be mapped to physical memory or stored on disk when necessary. A page fault occurs when a
-3.   linux_chunk_0 -> 0.452718
-  Linux is an operating system kernel used by many different operating systems and distributions. Linux is widely used on servers, personal computers, embedded devices, and cloud infrastructure. The Linux kernel manages hardware resources and provides essential services to applications. Processes are running programs managed by the operating system. Linux uses virtual memory to give processes an isolated address space. The scheduler decides which processes receive CPU time. Filesystems organize data stored on disks and other storage devices. Linux supports many filesystems including ext4 and XFS. The command line is an important part of Linux administration. Common commands include ls, cd,
+3.   operating_systems_chunk_2 -> 0.516603
+  to notify the processor that an event requires attention. The operating system also provides mechanisms for processes to communicate and synchronize. Threads allow multiple execution paths to exist within a process. Locks and other synchronization mechanisms help protect shared data from concurrent access. Deadlocks can occur when processes wait indefinitely for resources held by each other. Operating systems use scheduling algorithms to decide how CPU time is distributed. Common scheduling approaches include first-come-first-served, shortest-job-first, priority scheduling, and round-robin scheduling. Operating systems also provide security mechanisms for controlling access to files, processes, memory, and hardware resources.
 Result: ~ Relevant chunk found in Top-3
 
 Query 16/42
@@ -185,23 +185,23 @@ Relevant chunks: ["operating_systems_chunk_0", "linux_chunk_0"]
 
 1.   operating_systems_chunk_1 -> 0.478692
   a process accesses a page that is not currently available in physical memory. The operating system uses page tables to translate virtual addresses into physical addresses. File systems organize persistent data into files and directories. Device drivers allow the operating system to communicate with hardware devices. System calls provide an interface through which applications request services from the operating system. Applications can use system calls to open files, create processes, allocate memory, and communicate with devices. User mode restricts applications from directly performing privileged operations. Kernel mode allows the operating system to perform privileged operations. Interrupts allow hardware devices to
-2. ✓ linux_chunk_0 -> 0.251162
-  Linux is an operating system kernel used by many different operating systems and distributions. Linux is widely used on servers, personal computers, embedded devices, and cloud infrastructure. The Linux kernel manages hardware resources and provides essential services to applications. Processes are running programs managed by the operating system. Linux uses virtual memory to give processes an isolated address space. The scheduler decides which processes receive CPU time. Filesystems organize data stored on disks and other storage devices. Linux supports many filesystems including ext4 and XFS. The command line is an important part of Linux administration. Common commands include ls, cd,
-3. ✓ operating_systems_chunk_0 -> 0.234663
-  An operating system manages computer hardware and provides services that allow application programs to run. The operating system manages processes, memory, storage, devices, and security. A process is a program that is currently executing. The operating system scheduler determines which process receives CPU time. Processes can move between states such as ready, running, and waiting. Context switching allows the CPU to move from one process to another. Virtual memory gives processes the appearance of having a large private memory space. Memory pages can be mapped to physical memory or stored on disk when necessary. A page fault occurs when a
-Result: ~ Relevant chunk found in Top-3
+2.   databases_chunk_2 -> 0.437264
+  hardware.
+3.   linux_chunk_1 -> 0.309318
+  cd, cp, mv, and grep. Permissions control which users can read, write, or execute files. Linux uses users and groups to manage access to system resources. The root user has extensive privileges over the system. Services can run in the background and provide functionality such as networking or web hosting. System logs help administrators diagnose problems. Linux networking provides tools for inspecting interfaces, routes, and connections. Shell scripts can automate repetitive administrative tasks. Package managers are used to install and update software. Linux distributions combine the kernel with utilities, libraries, package managers, and applications.
+Result: ✗ Relevant chunk not found
 
 Query 17/42
 Query: How does an operating system distribute processor time?
 Relevant chunks: ["linux_chunk_0", "operating_systems_chunk_0"]
 
-1. ✓ operating_systems_chunk_0 -> 0.578386
+1.   operating_systems_chunk_2 -> 0.599211
+  to notify the processor that an event requires attention. The operating system also provides mechanisms for processes to communicate and synchronize. Threads allow multiple execution paths to exist within a process. Locks and other synchronization mechanisms help protect shared data from concurrent access. Deadlocks can occur when processes wait indefinitely for resources held by each other. Operating systems use scheduling algorithms to decide how CPU time is distributed. Common scheduling approaches include first-come-first-served, shortest-job-first, priority scheduling, and round-robin scheduling. Operating systems also provide security mechanisms for controlling access to files, processes, memory, and hardware resources.
+2. ✓ operating_systems_chunk_0 -> 0.578386
   An operating system manages computer hardware and provides services that allow application programs to run. The operating system manages processes, memory, storage, devices, and security. A process is a program that is currently executing. The operating system scheduler determines which process receives CPU time. Processes can move between states such as ready, running, and waiting. Context switching allows the CPU to move from one process to another. Virtual memory gives processes the appearance of having a large private memory space. Memory pages can be mapped to physical memory or stored on disk when necessary. A page fault occurs when a
-2. ✓ linux_chunk_0 -> 0.461040
+3. ✓ linux_chunk_0 -> 0.461040
   Linux is an operating system kernel used by many different operating systems and distributions. Linux is widely used on servers, personal computers, embedded devices, and cloud infrastructure. The Linux kernel manages hardware resources and provides essential services to applications. Processes are running programs managed by the operating system. Linux uses virtual memory to give processes an isolated address space. The scheduler decides which processes receive CPU time. Filesystems organize data stored on disks and other storage devices. Linux supports many filesystems including ext4 and XFS. The command line is an important part of Linux administration. Common commands include ls, cd,
-3.   operating_systems_chunk_1 -> 0.436498
-  a process accesses a page that is not currently available in physical memory. The operating system uses page tables to translate virtual addresses into physical addresses. File systems organize persistent data into files and directories. Device drivers allow the operating system to communicate with hardware devices. System calls provide an interface through which applications request services from the operating system. Applications can use system calls to open files, create processes, allocate memory, and communicate with devices. User mode restricts applications from directly performing privileged operations. Kernel mode allows the operating system to perform privileged operations. Interrupts allow hardware devices to
-Result: ✓ Top-1 correct
+Result: ~ Relevant chunk found in Top-3
 
 Query 18/42
 Query: What is a process in an operating system?
@@ -211,8 +211,8 @@ Relevant chunks: ["linux_chunk_0", "operating_systems_chunk_0"]
   An operating system manages computer hardware and provides services that allow application programs to run. The operating system manages processes, memory, storage, devices, and security. A process is a program that is currently executing. The operating system scheduler determines which process receives CPU time. Processes can move between states such as ready, running, and waiting. Context switching allows the CPU to move from one process to another. Virtual memory gives processes the appearance of having a large private memory space. Memory pages can be mapped to physical memory or stored on disk when necessary. A page fault occurs when a
 2.   operating_systems_chunk_1 -> 0.613204
   a process accesses a page that is not currently available in physical memory. The operating system uses page tables to translate virtual addresses into physical addresses. File systems organize persistent data into files and directories. Device drivers allow the operating system to communicate with hardware devices. System calls provide an interface through which applications request services from the operating system. Applications can use system calls to open files, create processes, allocate memory, and communicate with devices. User mode restricts applications from directly performing privileged operations. Kernel mode allows the operating system to perform privileged operations. Interrupts allow hardware devices to
-3. ✓ linux_chunk_0 -> 0.602609
-  Linux is an operating system kernel used by many different operating systems and distributions. Linux is widely used on servers, personal computers, embedded devices, and cloud infrastructure. The Linux kernel manages hardware resources and provides essential services to applications. Processes are running programs managed by the operating system. Linux uses virtual memory to give processes an isolated address space. The scheduler decides which processes receive CPU time. Filesystems organize data stored on disks and other storage devices. Linux supports many filesystems including ext4 and XFS. The command line is an important part of Linux administration. Common commands include ls, cd,
+3.   operating_systems_chunk_2 -> 0.604113
+  to notify the processor that an event requires attention. The operating system also provides mechanisms for processes to communicate and synchronize. Threads allow multiple execution paths to exist within a process. Locks and other synchronization mechanisms help protect shared data from concurrent access. Deadlocks can occur when processes wait indefinitely for resources held by each other. Operating systems use scheduling algorithms to decide how CPU time is distributed. Common scheduling approaches include first-come-first-served, shortest-job-first, priority scheduling, and round-robin scheduling. Operating systems also provide security mechanisms for controlling access to files, processes, memory, and hardware resources.
 Result: ✓ Top-1 correct
 
 Query 19/42
@@ -223,8 +223,8 @@ Relevant chunks: ["databases_chunk_0", "databases_chunk_1"]
   A database is a system for storing and retrieving structured information. Relational databases organize information into tables containing rows and columns. Each row represents a record and each column represents an attribute. SQL is commonly used to query relational databases. A primary key uniquely identifies a row in a table. Foreign keys establish relationships between tables. Database indexes improve query performance by providing efficient ways to locate records. An index can reduce the amount of data that a database needs to examine during a query. Transactions allow multiple database operations to be treated as a single unit of work. Transactions
 2. ✓ databases_chunk_1 -> 0.469489
   Transactions commonly provide atomicity, consistency, isolation, and durability. These properties are known as ACID. Atomicity means that a transaction succeeds completely or fails completely. Isolation controls how concurrent transactions interact with each other. Durability means committed changes survive failures. Database normalization reduces unnecessary duplication of information. Joins allow queries to combine related data from multiple tables. A database query optimizer chooses an efficient strategy for executing a query. Backups protect data against accidental deletion and hardware failures. Replication can maintain copies of data on multiple database servers. Database systems can be optimized through indexes, query design, caching, and appropriate hardware.
-3.   python_ml_chunk_2 -> 0.252044
-  used to find items that are semantically related. Neural networks are commonly used to learn useful representations from large datasets.
+3.   databases_chunk_2 -> 0.278116
+  hardware.
 Result: ✓ Top-1 correct
 
 Query 20/42
@@ -235,8 +235,8 @@ Relevant chunks: ["databases_chunk_0"]
   A database is a system for storing and retrieving structured information. Relational databases organize information into tables containing rows and columns. Each row represents a record and each column represents an attribute. SQL is commonly used to query relational databases. A primary key uniquely identifies a row in a table. Foreign keys establish relationships between tables. Database indexes improve query performance by providing efficient ways to locate records. An index can reduce the amount of data that a database needs to examine during a query. Transactions allow multiple database operations to be treated as a single unit of work. Transactions
 2.   databases_chunk_1 -> 0.395377
   Transactions commonly provide atomicity, consistency, isolation, and durability. These properties are known as ACID. Atomicity means that a transaction succeeds completely or fails completely. Isolation controls how concurrent transactions interact with each other. Durability means committed changes survive failures. Database normalization reduces unnecessary duplication of information. Joins allow queries to combine related data from multiple tables. A database query optimizer chooses an efficient strategy for executing a query. Backups protect data against accidental deletion and hardware failures. Replication can maintain copies of data on multiple database servers. Database systems can be optimized through indexes, query design, caching, and appropriate hardware.
-3.   python_ml_chunk_2 -> 0.295729
-  used to find items that are semantically related. Neural networks are commonly used to learn useful representations from large datasets.
+3.   operating_systems_chunk_1 -> 0.264930
+  a process accesses a page that is not currently available in physical memory. The operating system uses page tables to translate virtual addresses into physical addresses. File systems organize persistent data into files and directories. Device drivers allow the operating system to communicate with hardware devices. System calls provide an interface through which applications request services from the operating system. Applications can use system calls to open files, create processes, allocate memory, and communicate with devices. User mode restricts applications from directly performing privileged operations. Kernel mode allows the operating system to perform privileged operations. Interrupts allow hardware devices to
 Result: ✓ Top-1 correct
 
 Query 21/42
@@ -245,10 +245,10 @@ Relevant chunks: ["databases_chunk_0"]
 
 1. ✓ databases_chunk_0 -> 0.567942
   A database is a system for storing and retrieving structured information. Relational databases organize information into tables containing rows and columns. Each row represents a record and each column represents an attribute. SQL is commonly used to query relational databases. A primary key uniquely identifies a row in a table. Foreign keys establish relationships between tables. Database indexes improve query performance by providing efficient ways to locate records. An index can reduce the amount of data that a database needs to examine during a query. Transactions allow multiple database operations to be treated as a single unit of work. Transactions
-2.   python_ml_chunk_2 -> 0.435881
-  used to find items that are semantically related. Neural networks are commonly used to learn useful representations from large datasets.
-3.   databases_chunk_1 -> 0.382413
+2.   databases_chunk_1 -> 0.382413
   Transactions commonly provide atomicity, consistency, isolation, and durability. These properties are known as ACID. Atomicity means that a transaction succeeds completely or fails completely. Isolation controls how concurrent transactions interact with each other. Durability means committed changes survive failures. Database normalization reduces unnecessary duplication of information. Joins allow queries to combine related data from multiple tables. A database query optimizer chooses an efficient strategy for executing a query. Backups protect data against accidental deletion and hardware failures. Replication can maintain copies of data on multiple database servers. Database systems can be optimized through indexes, query design, caching, and appropriate hardware.
+3.   python_ml_chunk_0 -> 0.270305
+  Python is widely used for machine learning and data science. Machine learning models learn patterns from data and can make predictions on new examples. Embeddings represent text, images, or other information as numerical vectors. Vector similarity can be used to find items that are semantically related. Neural networks are commonly used to learn useful representations from large datasets. Python has many machine learning libraries including PyTorch and scikit-learn.
 Result: ✓ Top-1 correct
 
 Query 22/42
@@ -259,8 +259,8 @@ Relevant chunks: ["databases_chunk_0", "databases_chunk_1"]
   Transactions commonly provide atomicity, consistency, isolation, and durability. These properties are known as ACID. Atomicity means that a transaction succeeds completely or fails completely. Isolation controls how concurrent transactions interact with each other. Durability means committed changes survive failures. Database normalization reduces unnecessary duplication of information. Joins allow queries to combine related data from multiple tables. A database query optimizer chooses an efficient strategy for executing a query. Backups protect data against accidental deletion and hardware failures. Replication can maintain copies of data on multiple database servers. Database systems can be optimized through indexes, query design, caching, and appropriate hardware.
 2. ✓ databases_chunk_0 -> 0.571704
   A database is a system for storing and retrieving structured information. Relational databases organize information into tables containing rows and columns. Each row represents a record and each column represents an attribute. SQL is commonly used to query relational databases. A primary key uniquely identifies a row in a table. Foreign keys establish relationships between tables. Database indexes improve query performance by providing efficient ways to locate records. An index can reduce the amount of data that a database needs to examine during a query. Transactions allow multiple database operations to be treated as a single unit of work. Transactions
-3.   operating_systems_chunk_0 -> 0.266400
-  An operating system manages computer hardware and provides services that allow application programs to run. The operating system manages processes, memory, storage, devices, and security. A process is a program that is currently executing. The operating system scheduler determines which process receives CPU time. Processes can move between states such as ready, running, and waiting. Context switching allows the CPU to move from one process to another. Virtual memory gives processes the appearance of having a large private memory space. Memory pages can be mapped to physical memory or stored on disk when necessary. A page fault occurs when a
+3.   operating_systems_chunk_2 -> 0.344534
+  to notify the processor that an event requires attention. The operating system also provides mechanisms for processes to communicate and synchronize. Threads allow multiple execution paths to exist within a process. Locks and other synchronization mechanisms help protect shared data from concurrent access. Deadlocks can occur when processes wait indefinitely for resources held by each other. Operating systems use scheduling algorithms to decide how CPU time is distributed. Common scheduling approaches include first-come-first-served, shortest-job-first, priority scheduling, and round-robin scheduling. Operating systems also provide security mechanisms for controlling access to files, processes, memory, and hardware resources.
 Result: ✓ Top-1 correct
 
 Query 23/42
@@ -271,8 +271,8 @@ Relevant chunks: ["databases_chunk_1"]
   Transactions commonly provide atomicity, consistency, isolation, and durability. These properties are known as ACID. Atomicity means that a transaction succeeds completely or fails completely. Isolation controls how concurrent transactions interact with each other. Durability means committed changes survive failures. Database normalization reduces unnecessary duplication of information. Joins allow queries to combine related data from multiple tables. A database query optimizer chooses an efficient strategy for executing a query. Backups protect data against accidental deletion and hardware failures. Replication can maintain copies of data on multiple database servers. Database systems can be optimized through indexes, query design, caching, and appropriate hardware.
 2.   databases_chunk_0 -> 0.528668
   A database is a system for storing and retrieving structured information. Relational databases organize information into tables containing rows and columns. Each row represents a record and each column represents an attribute. SQL is commonly used to query relational databases. A primary key uniquely identifies a row in a table. Foreign keys establish relationships between tables. Database indexes improve query performance by providing efficient ways to locate records. An index can reduce the amount of data that a database needs to examine during a query. Transactions allow multiple database operations to be treated as a single unit of work. Transactions
-3.   python_ml_chunk_2 -> 0.340969
-  used to find items that are semantically related. Neural networks are commonly used to learn useful representations from large datasets.
+3.   operating_systems_chunk_1 -> 0.272242
+  a process accesses a page that is not currently available in physical memory. The operating system uses page tables to translate virtual addresses into physical addresses. File systems organize persistent data into files and directories. Device drivers allow the operating system to communicate with hardware devices. System calls provide an interface through which applications request services from the operating system. Applications can use system calls to open files, create processes, allocate memory, and communicate with devices. User mode restricts applications from directly performing privileged operations. Kernel mode allows the operating system to perform privileged operations. Interrupts allow hardware devices to
 Result: ✓ Top-1 correct
 
 Query 24/42
@@ -307,8 +307,8 @@ Relevant chunks: ["databases_chunk_0", "databases_chunk_1"]
   A database is a system for storing and retrieving structured information. Relational databases organize information into tables containing rows and columns. Each row represents a record and each column represents an attribute. SQL is commonly used to query relational databases. A primary key uniquely identifies a row in a table. Foreign keys establish relationships between tables. Database indexes improve query performance by providing efficient ways to locate records. An index can reduce the amount of data that a database needs to examine during a query. Transactions allow multiple database operations to be treated as a single unit of work. Transactions
 2. ✓ databases_chunk_1 -> 0.514669
   Transactions commonly provide atomicity, consistency, isolation, and durability. These properties are known as ACID. Atomicity means that a transaction succeeds completely or fails completely. Isolation controls how concurrent transactions interact with each other. Durability means committed changes survive failures. Database normalization reduces unnecessary duplication of information. Joins allow queries to combine related data from multiple tables. A database query optimizer chooses an efficient strategy for executing a query. Backups protect data against accidental deletion and hardware failures. Replication can maintain copies of data on multiple database servers. Database systems can be optimized through indexes, query design, caching, and appropriate hardware.
-3.   operating_systems_chunk_0 -> 0.316125
-  An operating system manages computer hardware and provides services that allow application programs to run. The operating system manages processes, memory, storage, devices, and security. A process is a program that is currently executing. The operating system scheduler determines which process receives CPU time. Processes can move between states such as ready, running, and waiting. Context switching allows the CPU to move from one process to another. Virtual memory gives processes the appearance of having a large private memory space. Memory pages can be mapped to physical memory or stored on disk when necessary. A page fault occurs when a
+3.   operating_systems_chunk_2 -> 0.336834
+  to notify the processor that an event requires attention. The operating system also provides mechanisms for processes to communicate and synchronize. Threads allow multiple execution paths to exist within a process. Locks and other synchronization mechanisms help protect shared data from concurrent access. Deadlocks can occur when processes wait indefinitely for resources held by each other. Operating systems use scheduling algorithms to decide how CPU time is distributed. Common scheduling approaches include first-come-first-served, shortest-job-first, priority scheduling, and round-robin scheduling. Operating systems also provide security mechanisms for controlling access to files, processes, memory, and hardware resources.
 Result: ✓ Top-1 correct
 
 Query 27/42
@@ -317,10 +317,10 @@ Relevant chunks: ["networking_chunk_0"]
 
 1. ✓ networking_chunk_0 -> 0.502555
   Computer networking allows devices to communicate and exchange information. A network can connect computers within a local area or across the internet. IP addresses identify network interfaces and allow packets to be routed between networks. IPv4 uses 32-bit addresses while IPv6 uses 128-bit addresses. TCP provides reliable, ordered delivery of data between applications. TCP uses connections and retransmission to handle lost packets. UDP provides a simpler connectionless transport mechanism without guaranteeing delivery. DNS translates human-readable domain names into IP addresses. HTTP is an application protocol commonly used to transfer web resources. HTTPS adds encryption and authentication to HTTP using TLS.
-2.   operating_systems_chunk_1 -> 0.186313
-  a process accesses a page that is not currently available in physical memory. The operating system uses page tables to translate virtual addresses into physical addresses. File systems organize persistent data into files and directories. Device drivers allow the operating system to communicate with hardware devices. System calls provide an interface through which applications request services from the operating system. Applications can use system calls to open files, create processes, allocate memory, and communicate with devices. User mode restricts applications from directly performing privileged operations. Kernel mode allows the operating system to perform privileged operations. Interrupts allow hardware devices to
-3.   databases_chunk_0 -> 0.178294
-  A database is a system for storing and retrieving structured information. Relational databases organize information into tables containing rows and columns. Each row represents a record and each column represents an attribute. SQL is commonly used to query relational databases. A primary key uniquely identifies a row in a table. Foreign keys establish relationships between tables. Database indexes improve query performance by providing efficient ways to locate records. An index can reduce the amount of data that a database needs to examine during a query. Transactions allow multiple database operations to be treated as a single unit of work. Transactions
+2.   networking_chunk_1 -> 0.219902
+  TLS. Routers forward packets between different networks. Switches connect devices within a local network. A port identifies a network service associated with a transport protocol. Firewalls control network traffic according to configured rules. Latency describes the time required for data to travel between endpoints. Bandwidth describes the capacity of a network connection. Packet loss occurs when packets fail to reach their destination. Network troubleshooting can involve checking interfaces, routes, DNS configuration, connectivity, and service availability. Tools such as ping, traceroute, curl, and netstat can help diagnose networking problems.
+3.   linux_chunk_1 -> 0.195636
+  cd, cp, mv, and grep. Permissions control which users can read, write, or execute files. Linux uses users and groups to manage access to system resources. The root user has extensive privileges over the system. Services can run in the background and provide functionality such as networking or web hosting. System logs help administrators diagnose problems. Linux networking provides tools for inspecting interfaces, routes, and connections. Shell scripts can automate repetitive administrative tasks. Package managers are used to install and update software. Linux distributions combine the kernel with utilities, libraries, package managers, and applications.
 Result: ✓ Top-1 correct
 
 Query 28/42
@@ -331,8 +331,8 @@ Relevant chunks: ["networking_chunk_0"]
   Computer networking allows devices to communicate and exchange information. A network can connect computers within a local area or across the internet. IP addresses identify network interfaces and allow packets to be routed between networks. IPv4 uses 32-bit addresses while IPv6 uses 128-bit addresses. TCP provides reliable, ordered delivery of data between applications. TCP uses connections and retransmission to handle lost packets. UDP provides a simpler connectionless transport mechanism without guaranteeing delivery. DNS translates human-readable domain names into IP addresses. HTTP is an application protocol commonly used to transfer web resources. HTTPS adds encryption and authentication to HTTP using TLS.
 2.   operating_systems_chunk_1 -> 0.218929
   a process accesses a page that is not currently available in physical memory. The operating system uses page tables to translate virtual addresses into physical addresses. File systems organize persistent data into files and directories. Device drivers allow the operating system to communicate with hardware devices. System calls provide an interface through which applications request services from the operating system. Applications can use system calls to open files, create processes, allocate memory, and communicate with devices. User mode restricts applications from directly performing privileged operations. Kernel mode allows the operating system to perform privileged operations. Interrupts allow hardware devices to
-3.   databases_chunk_0 -> 0.182876
-  A database is a system for storing and retrieving structured information. Relational databases organize information into tables containing rows and columns. Each row represents a record and each column represents an attribute. SQL is commonly used to query relational databases. A primary key uniquely identifies a row in a table. Foreign keys establish relationships between tables. Database indexes improve query performance by providing efficient ways to locate records. An index can reduce the amount of data that a database needs to examine during a query. Transactions allow multiple database operations to be treated as a single unit of work. Transactions
+3.   networking_chunk_1 -> 0.206507
+  TLS. Routers forward packets between different networks. Switches connect devices within a local network. A port identifies a network service associated with a transport protocol. Firewalls control network traffic according to configured rules. Latency describes the time required for data to travel between endpoints. Bandwidth describes the capacity of a network connection. Packet loss occurs when packets fail to reach their destination. Network troubleshooting can involve checking interfaces, routes, DNS configuration, connectivity, and service availability. Tools such as ping, traceroute, curl, and netstat can help diagnose networking problems.
 Result: ✓ Top-1 correct
 
 Query 29/42
@@ -343,8 +343,8 @@ Relevant chunks: ["networking_chunk_0"]
   Computer networking allows devices to communicate and exchange information. A network can connect computers within a local area or across the internet. IP addresses identify network interfaces and allow packets to be routed between networks. IPv4 uses 32-bit addresses while IPv6 uses 128-bit addresses. TCP provides reliable, ordered delivery of data between applications. TCP uses connections and retransmission to handle lost packets. UDP provides a simpler connectionless transport mechanism without guaranteeing delivery. DNS translates human-readable domain names into IP addresses. HTTP is an application protocol commonly used to transfer web resources. HTTPS adds encryption and authentication to HTTP using TLS.
 2.   databases_chunk_1 -> 0.264640
   Transactions commonly provide atomicity, consistency, isolation, and durability. These properties are known as ACID. Atomicity means that a transaction succeeds completely or fails completely. Isolation controls how concurrent transactions interact with each other. Durability means committed changes survive failures. Database normalization reduces unnecessary duplication of information. Joins allow queries to combine related data from multiple tables. A database query optimizer chooses an efficient strategy for executing a query. Backups protect data against accidental deletion and hardware failures. Replication can maintain copies of data on multiple database servers. Database systems can be optimized through indexes, query design, caching, and appropriate hardware.
-3.   databases_chunk_0 -> 0.117162
-  A database is a system for storing and retrieving structured information. Relational databases organize information into tables containing rows and columns. Each row represents a record and each column represents an attribute. SQL is commonly used to query relational databases. A primary key uniquely identifies a row in a table. Foreign keys establish relationships between tables. Database indexes improve query performance by providing efficient ways to locate records. An index can reduce the amount of data that a database needs to examine during a query. Transactions allow multiple database operations to be treated as a single unit of work. Transactions
+3.   networking_chunk_1 -> 0.247115
+  TLS. Routers forward packets between different networks. Switches connect devices within a local network. A port identifies a network service associated with a transport protocol. Firewalls control network traffic according to configured rules. Latency describes the time required for data to travel between endpoints. Bandwidth describes the capacity of a network connection. Packet loss occurs when packets fail to reach their destination. Network troubleshooting can involve checking interfaces, routes, DNS configuration, connectivity, and service availability. Tools such as ping, traceroute, curl, and netstat can help diagnose networking problems.
 Result: ✓ Top-1 correct
 
 Query 30/42
@@ -353,10 +353,10 @@ Relevant chunks: ["networking_chunk_0"]
 
 1. ✓ networking_chunk_0 -> 0.564878
   Computer networking allows devices to communicate and exchange information. A network can connect computers within a local area or across the internet. IP addresses identify network interfaces and allow packets to be routed between networks. IPv4 uses 32-bit addresses while IPv6 uses 128-bit addresses. TCP provides reliable, ordered delivery of data between applications. TCP uses connections and retransmission to handle lost packets. UDP provides a simpler connectionless transport mechanism without guaranteeing delivery. DNS translates human-readable domain names into IP addresses. HTTP is an application protocol commonly used to transfer web resources. HTTPS adds encryption and authentication to HTTP using TLS.
-2.   operating_systems_chunk_1 -> 0.227977
+2.   networking_chunk_1 -> 0.353201
+  TLS. Routers forward packets between different networks. Switches connect devices within a local network. A port identifies a network service associated with a transport protocol. Firewalls control network traffic according to configured rules. Latency describes the time required for data to travel between endpoints. Bandwidth describes the capacity of a network connection. Packet loss occurs when packets fail to reach their destination. Network troubleshooting can involve checking interfaces, routes, DNS configuration, connectivity, and service availability. Tools such as ping, traceroute, curl, and netstat can help diagnose networking problems.
+3.   operating_systems_chunk_1 -> 0.227977
   a process accesses a page that is not currently available in physical memory. The operating system uses page tables to translate virtual addresses into physical addresses. File systems organize persistent data into files and directories. Device drivers allow the operating system to communicate with hardware devices. System calls provide an interface through which applications request services from the operating system. Applications can use system calls to open files, create processes, allocate memory, and communicate with devices. User mode restricts applications from directly performing privileged operations. Kernel mode allows the operating system to perform privileged operations. Interrupts allow hardware devices to
-3.   rust_long_chunk_0 -> 0.209892
-  Rust is a systems programming language focused on safety and performance. Rust provides memory safety without requiring a garbage collector. Ownership is one of the core concepts in Rust and controls how memory is managed. Borrowing allows Rust programs to reference data without taking ownership. The Rust compiler checks ownership and borrowing rules at compile time. Rust is commonly used for systems programming, web services, command line tools, and embedded software. Concurrency is another important feature of Rust because the type system helps prevent many data races. Cargo is the package manager and build system used by Rust projects.
 Result: ✓ Top-1 correct
 
 Query 31/42
@@ -365,71 +365,71 @@ Relevant chunks: ["networking_chunk_0"]
 
 1. ✓ networking_chunk_0 -> 0.503813
   Computer networking allows devices to communicate and exchange information. A network can connect computers within a local area or across the internet. IP addresses identify network interfaces and allow packets to be routed between networks. IPv4 uses 32-bit addresses while IPv6 uses 128-bit addresses. TCP provides reliable, ordered delivery of data between applications. TCP uses connections and retransmission to handle lost packets. UDP provides a simpler connectionless transport mechanism without guaranteeing delivery. DNS translates human-readable domain names into IP addresses. HTTP is an application protocol commonly used to transfer web resources. HTTPS adds encryption and authentication to HTTP using TLS.
-2.   git_chunk_0 -> 0.165056
+2.   networking_chunk_1 -> 0.290084
+  TLS. Routers forward packets between different networks. Switches connect devices within a local network. A port identifies a network service associated with a transport protocol. Firewalls control network traffic according to configured rules. Latency describes the time required for data to travel between endpoints. Bandwidth describes the capacity of a network connection. Packet loss occurs when packets fail to reach their destination. Network troubleshooting can involve checking interfaces, routes, DNS configuration, connectivity, and service availability. Tools such as ping, traceroute, curl, and netstat can help diagnose networking problems.
+3.   git_chunk_0 -> 0.165056
   Git is a distributed version control system used to track changes in files and coordinate work between developers. A Git repository stores the history of a project and contains information about commits, branches, and other objects. A commit records a snapshot of changes along with metadata such as the author and message. The staging area allows developers to select which changes should be included in the next commit. The git add command places changes into the staging area. The git commit command creates a new commit from staged changes. A branch is a movable reference to a series of commits.
-3.   git_chunk_1 -> 0.149781
-  commits. Branches allow developers to work on different features without immediately changing the main development line. The git switch command can be used to move between branches. Merging combines changes from different branches. A merge conflict can occur when Git cannot automatically combine changes. Developers must manually resolve conflicting changes before completing the merge. Git rebase can replay commits onto a different base commit and can produce a cleaner project history. Remote repositories allow developers to share changes with other machines and team members. The git clone command creates a local copy of a remote repository. The git fetch command
 Result: ✓ Top-1 correct
 
 Query 32/42
 Query: What device forwards packets between networks?
 Relevant chunks: ["networking_chunk_0"]
 
-1. ✓ networking_chunk_0 -> 0.424506
+1.   networking_chunk_1 -> 0.515418
+  TLS. Routers forward packets between different networks. Switches connect devices within a local network. A port identifies a network service associated with a transport protocol. Firewalls control network traffic according to configured rules. Latency describes the time required for data to travel between endpoints. Bandwidth describes the capacity of a network connection. Packet loss occurs when packets fail to reach their destination. Network troubleshooting can involve checking interfaces, routes, DNS configuration, connectivity, and service availability. Tools such as ping, traceroute, curl, and netstat can help diagnose networking problems.
+2. ✓ networking_chunk_0 -> 0.424506
   Computer networking allows devices to communicate and exchange information. A network can connect computers within a local area or across the internet. IP addresses identify network interfaces and allow packets to be routed between networks. IPv4 uses 32-bit addresses while IPv6 uses 128-bit addresses. TCP provides reliable, ordered delivery of data between applications. TCP uses connections and retransmission to handle lost packets. UDP provides a simpler connectionless transport mechanism without guaranteeing delivery. DNS translates human-readable domain names into IP addresses. HTTP is an application protocol commonly used to transfer web resources. HTTPS adds encryption and authentication to HTTP using TLS.
-2.   python_ml_chunk_2 -> 0.250024
-  used to find items that are semantically related. Neural networks are commonly used to learn useful representations from large datasets.
-3.   operating_systems_chunk_1 -> 0.238421
-  a process accesses a page that is not currently available in physical memory. The operating system uses page tables to translate virtual addresses into physical addresses. File systems organize persistent data into files and directories. Device drivers allow the operating system to communicate with hardware devices. System calls provide an interface through which applications request services from the operating system. Applications can use system calls to open files, create processes, allocate memory, and communicate with devices. User mode restricts applications from directly performing privileged operations. Kernel mode allows the operating system to perform privileged operations. Interrupts allow hardware devices to
-Result: ✓ Top-1 correct
+3.   databases_chunk_2 -> 0.255663
+  hardware.
+Result: ~ Relevant chunk found in Top-3
 
 Query 33/42
 Query: What does network latency measure?
 Relevant chunks: ["networking_chunk_0"]
 
-1. ✓ networking_chunk_0 -> 0.316425
+1.   networking_chunk_1 -> 0.640878
+  TLS. Routers forward packets between different networks. Switches connect devices within a local network. A port identifies a network service associated with a transport protocol. Firewalls control network traffic according to configured rules. Latency describes the time required for data to travel between endpoints. Bandwidth describes the capacity of a network connection. Packet loss occurs when packets fail to reach their destination. Network troubleshooting can involve checking interfaces, routes, DNS configuration, connectivity, and service availability. Tools such as ping, traceroute, curl, and netstat can help diagnose networking problems.
+2. ✓ networking_chunk_0 -> 0.316425
   Computer networking allows devices to communicate and exchange information. A network can connect computers within a local area or across the internet. IP addresses identify network interfaces and allow packets to be routed between networks. IPv4 uses 32-bit addresses while IPv6 uses 128-bit addresses. TCP provides reliable, ordered delivery of data between applications. TCP uses connections and retransmission to handle lost packets. UDP provides a simpler connectionless transport mechanism without guaranteeing delivery. DNS translates human-readable domain names into IP addresses. HTTP is an application protocol commonly used to transfer web resources. HTTPS adds encryption and authentication to HTTP using TLS.
-2.   python_ml_chunk_2 -> 0.168014
-  used to find items that are semantically related. Neural networks are commonly used to learn useful representations from large datasets.
-3.   operating_systems_chunk_0 -> 0.150862
-  An operating system manages computer hardware and provides services that allow application programs to run. The operating system manages processes, memory, storage, devices, and security. A process is a program that is currently executing. The operating system scheduler determines which process receives CPU time. Processes can move between states such as ready, running, and waiting. Context switching allows the CPU to move from one process to another. Virtual memory gives processes the appearance of having a large private memory space. Memory pages can be mapped to physical memory or stored on disk when necessary. A page fault occurs when a
-Result: ✓ Top-1 correct
+3.   operating_systems_chunk_2 -> 0.231827
+  to notify the processor that an event requires attention. The operating system also provides mechanisms for processes to communicate and synchronize. Threads allow multiple execution paths to exist within a process. Locks and other synchronization mechanisms help protect shared data from concurrent access. Deadlocks can occur when processes wait indefinitely for resources held by each other. Operating systems use scheduling algorithms to decide how CPU time is distributed. Common scheduling approaches include first-come-first-served, shortest-job-first, priority scheduling, and round-robin scheduling. Operating systems also provide security mechanisms for controlling access to files, processes, memory, and hardware resources.
+Result: ~ Relevant chunk found in Top-3
 
 Query 34/42
 Query: Which tools can help diagnose network connectivity problems?
 Relevant chunks: ["networking_chunk_0"]
 
-1. ✓ networking_chunk_0 -> 0.172893
+1.   networking_chunk_1 -> 0.382590
+  TLS. Routers forward packets between different networks. Switches connect devices within a local network. A port identifies a network service associated with a transport protocol. Firewalls control network traffic according to configured rules. Latency describes the time required for data to travel between endpoints. Bandwidth describes the capacity of a network connection. Packet loss occurs when packets fail to reach their destination. Network troubleshooting can involve checking interfaces, routes, DNS configuration, connectivity, and service availability. Tools such as ping, traceroute, curl, and netstat can help diagnose networking problems.
+2.   linux_chunk_1 -> 0.178341
+  cd, cp, mv, and grep. Permissions control which users can read, write, or execute files. Linux uses users and groups to manage access to system resources. The root user has extensive privileges over the system. Services can run in the background and provide functionality such as networking or web hosting. System logs help administrators diagnose problems. Linux networking provides tools for inspecting interfaces, routes, and connections. Shell scripts can automate repetitive administrative tasks. Package managers are used to install and update software. Linux distributions combine the kernel with utilities, libraries, package managers, and applications.
+3. ✓ networking_chunk_0 -> 0.172893
   Computer networking allows devices to communicate and exchange information. A network can connect computers within a local area or across the internet. IP addresses identify network interfaces and allow packets to be routed between networks. IPv4 uses 32-bit addresses while IPv6 uses 128-bit addresses. TCP provides reliable, ordered delivery of data between applications. TCP uses connections and retransmission to handle lost packets. UDP provides a simpler connectionless transport mechanism without guaranteeing delivery. DNS translates human-readable domain names into IP addresses. HTTP is an application protocol commonly used to transfer web resources. HTTPS adds encryption and authentication to HTTP using TLS.
-2.   git_chunk_2 -> 0.116119
-  command downloads changes from a remote repository without changing the current branch. The git pull command retrieves remote changes and integrates them into the current branch. The git push command uploads local commits to a remote repository. Tags can identify important commits such as software releases. Git log displays commit history and can help developers inspect previous changes. Git diff shows differences between versions of files. Git status reports the current state of the working tree and staging area. Git reset can move references or modify the staging area depending on how it is used. Git stash temporarily saves uncommitted
-3.   python_ml_chunk_2 -> 0.110412
-  used to find items that are semantically related. Neural networks are commonly used to learn useful representations from large datasets.
-Result: ✓ Top-1 correct
+Result: ~ Relevant chunk found in Top-3
 
 Query 35/42
 Query: How can developers temporarily save uncommitted changes?
 Relevant chunks: ["git_chunk_1", "git_chunk_2"]
 
-1. ✓ git_chunk_2 -> 0.423070
+1.   git_chunk_3 -> 0.472380
+  uncommitted changes so that developers can switch tasks. Git is useful because it provides distributed history, branching, merging, and tools for collaborating on software projects.
+2. ✓ git_chunk_2 -> 0.423070
   command downloads changes from a remote repository without changing the current branch. The git pull command retrieves remote changes and integrates them into the current branch. The git push command uploads local commits to a remote repository. Tags can identify important commits such as software releases. Git log displays commit history and can help developers inspect previous changes. Git diff shows differences between versions of files. Git status reports the current state of the working tree and staging area. Git reset can move references or modify the staging area depending on how it is used. Git stash temporarily saves uncommitted
-2. ✓ git_chunk_1 -> 0.396388
+3. ✓ git_chunk_1 -> 0.396388
   commits. Branches allow developers to work on different features without immediately changing the main development line. The git switch command can be used to move between branches. Merging combines changes from different branches. A merge conflict can occur when Git cannot automatically combine changes. Developers must manually resolve conflicting changes before completing the merge. Git rebase can replay commits onto a different base commit and can produce a cleaner project history. Remote repositories allow developers to share changes with other machines and team members. The git clone command creates a local copy of a remote repository. The git fetch command
-3.   git_chunk_0 -> 0.318247
-  Git is a distributed version control system used to track changes in files and coordinate work between developers. A Git repository stores the history of a project and contains information about commits, branches, and other objects. A commit records a snapshot of changes along with metadata such as the author and message. The staging area allows developers to select which changes should be included in the next commit. The git add command places changes into the staging area. The git commit command creates a new commit from staged changes. A branch is a movable reference to a series of commits.
-Result: ✓ Top-1 correct
+Result: ~ Relevant chunk found in Top-3
 
 Query 36/42
 Query: How can developers work on features without changing the main development line?
-Relevant chunks: ["git_chunk_0"]
+Relevant chunks: ["git_chunk_1"]
 
-1.   git_chunk_1 -> 0.404024
+1. ✓ git_chunk_1 -> 0.404024
   commits. Branches allow developers to work on different features without immediately changing the main development line. The git switch command can be used to move between branches. Merging combines changes from different branches. A merge conflict can occur when Git cannot automatically combine changes. Developers must manually resolve conflicting changes before completing the merge. Git rebase can replay commits onto a different base commit and can produce a cleaner project history. Remote repositories allow developers to share changes with other machines and team members. The git clone command creates a local copy of a remote repository. The git fetch command
-2.   git_chunk_2 -> 0.242566
+2.   git_chunk_3 -> 0.384380
+  uncommitted changes so that developers can switch tasks. Git is useful because it provides distributed history, branching, merging, and tools for collaborating on software projects.
+3.   git_chunk_2 -> 0.242566
   command downloads changes from a remote repository without changing the current branch. The git pull command retrieves remote changes and integrates them into the current branch. The git push command uploads local commits to a remote repository. Tags can identify important commits such as software releases. Git log displays commit history and can help developers inspect previous changes. Git diff shows differences between versions of files. Git status reports the current state of the working tree and staging area. Git reset can move references or modify the staging area depending on how it is used. Git stash temporarily saves uncommitted
-3. ✓ git_chunk_0 -> 0.156675
-  Git is a distributed version control system used to track changes in files and coordinate work between developers. A Git repository stores the history of a project and contains information about commits, branches, and other objects. A commit records a snapshot of changes along with metadata such as the author and message. The staging area allows developers to select which changes should be included in the next commit. The git add command places changes into the staging area. The git commit command creates a new commit from staged changes. A branch is a movable reference to a series of commits.
-Result: ~ Relevant chunk found in Top-3
+Result: ✓ Top-1 correct
 
 Query 37/42
 Query: What does a Git commit represent?
@@ -439,8 +439,8 @@ Relevant chunks: ["git_chunk_0"]
   Git is a distributed version control system used to track changes in files and coordinate work between developers. A Git repository stores the history of a project and contains information about commits, branches, and other objects. A commit records a snapshot of changes along with metadata such as the author and message. The staging area allows developers to select which changes should be included in the next commit. The git add command places changes into the staging area. The git commit command creates a new commit from staged changes. A branch is a movable reference to a series of commits.
 2.   git_chunk_2 -> 0.637161
   command downloads changes from a remote repository without changing the current branch. The git pull command retrieves remote changes and integrates them into the current branch. The git push command uploads local commits to a remote repository. Tags can identify important commits such as software releases. Git log displays commit history and can help developers inspect previous changes. Git diff shows differences between versions of files. Git status reports the current state of the working tree and staging area. Git reset can move references or modify the staging area depending on how it is used. Git stash temporarily saves uncommitted
-3.   git_chunk_1 -> 0.583216
-  commits. Branches allow developers to work on different features without immediately changing the main development line. The git switch command can be used to move between branches. Merging combines changes from different branches. A merge conflict can occur when Git cannot automatically combine changes. Developers must manually resolve conflicting changes before completing the merge. Git rebase can replay commits onto a different base commit and can produce a cleaner project history. Remote repositories allow developers to share changes with other machines and team members. The git clone command creates a local copy of a remote repository. The git fetch command
+3.   git_chunk_3 -> 0.603447
+  uncommitted changes so that developers can switch tasks. Git is useful because it provides distributed history, branching, merging, and tools for collaborating on software projects.
 Result: ✓ Top-1 correct
 
 Query 38/42
@@ -449,10 +449,10 @@ Relevant chunks: ["git_chunk_0"]
 
 1. ✓ git_chunk_0 -> 0.674927
   Git is a distributed version control system used to track changes in files and coordinate work between developers. A Git repository stores the history of a project and contains information about commits, branches, and other objects. A commit records a snapshot of changes along with metadata such as the author and message. The staging area allows developers to select which changes should be included in the next commit. The git add command places changes into the staging area. The git commit command creates a new commit from staged changes. A branch is a movable reference to a series of commits.
-2.   git_chunk_2 -> 0.453077
+2.   git_chunk_3 -> 0.590367
+  uncommitted changes so that developers can switch tasks. Git is useful because it provides distributed history, branching, merging, and tools for collaborating on software projects.
+3.   git_chunk_2 -> 0.453077
   command downloads changes from a remote repository without changing the current branch. The git pull command retrieves remote changes and integrates them into the current branch. The git push command uploads local commits to a remote repository. Tags can identify important commits such as software releases. Git log displays commit history and can help developers inspect previous changes. Git diff shows differences between versions of files. Git status reports the current state of the working tree and staging area. Git reset can move references or modify the staging area depending on how it is used. Git stash temporarily saves uncommitted
-3.   git_chunk_1 -> 0.443533
-  commits. Branches allow developers to work on different features without immediately changing the main development line. The git switch command can be used to move between branches. Merging combines changes from different branches. A merge conflict can occur when Git cannot automatically combine changes. Developers must manually resolve conflicting changes before completing the merge. Git rebase can replay commits onto a different base commit and can produce a cleaner project history. Remote repositories allow developers to share changes with other machines and team members. The git clone command creates a local copy of a remote repository. The git fetch command
 Result: ✓ Top-1 correct
 
 Query 39/42
@@ -473,10 +473,10 @@ Relevant chunks: ["git_chunk_1"]
 
 1. ✓ git_chunk_1 -> 0.594538
   commits. Branches allow developers to work on different features without immediately changing the main development line. The git switch command can be used to move between branches. Merging combines changes from different branches. A merge conflict can occur when Git cannot automatically combine changes. Developers must manually resolve conflicting changes before completing the merge. Git rebase can replay commits onto a different base commit and can produce a cleaner project history. Remote repositories allow developers to share changes with other machines and team members. The git clone command creates a local copy of a remote repository. The git fetch command
-2.   git_chunk_0 -> 0.472565
+2.   git_chunk_3 -> 0.541495
+  uncommitted changes so that developers can switch tasks. Git is useful because it provides distributed history, branching, merging, and tools for collaborating on software projects.
+3.   git_chunk_0 -> 0.472565
   Git is a distributed version control system used to track changes in files and coordinate work between developers. A Git repository stores the history of a project and contains information about commits, branches, and other objects. A commit records a snapshot of changes along with metadata such as the author and message. The staging area allows developers to select which changes should be included in the next commit. The git add command places changes into the staging area. The git commit command creates a new commit from staged changes. A branch is a movable reference to a series of commits.
-3.   git_chunk_2 -> 0.450900
-  command downloads changes from a remote repository without changing the current branch. The git pull command retrieves remote changes and integrates them into the current branch. The git push command uploads local commits to a remote repository. Tags can identify important commits such as software releases. Git log displays commit history and can help developers inspect previous changes. Git diff shows differences between versions of files. Git status reports the current state of the working tree and staging area. Git reset can move references or modify the staging area depending on how it is used. Git stash temporarily saves uncommitted
 Result: ✓ Top-1 correct
 
 Query 41/42
@@ -503,12 +503,12 @@ Relevant chunks: ["git_chunk_2"]
   Git is a distributed version control system used to track changes in files and coordinate work between developers. A Git repository stores the history of a project and contains information about commits, branches, and other objects. A commit records a snapshot of changes along with metadata such as the author and message. The staging area allows developers to select which changes should be included in the next commit. The git add command places changes into the staging area. The git commit command creates a new commit from staged changes. A branch is a movable reference to a series of commits.
 Result: ✓ Top-1 correct
 
-MRR: 0.933
+MRR: 0.790
 RECALL Retrieval Evaluation
 
 Queries: 42
-Top-1 Accuracy: 88.1%
-Top-3 Accuracy: 100.0%
+Top-1 Accuracy: 69.0%
+Top-3 Accuracy: 90.5%
 
-Top-1: 37/42
-Top-3: 42/42
+Top-1: 29/42
+Top-3: 38/42
