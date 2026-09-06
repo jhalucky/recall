@@ -8,7 +8,7 @@ use crate::error::RecallError;
 #[derive(Debug, Deserialize)]
 pub struct EvaluationQuery {
     pub query: String,
-    pub relevant_chunks: Vec<String>,
+    pub expected_documents: Vec<String>,
 }
 
 pub fn load_queries(path: &str) -> Result<Vec<EvaluationQuery>, RecallError> {
@@ -35,12 +35,12 @@ pub fn evaluate_detailed(
 
         let top_1_match = results
             .first()
-            .map(|result| evaluation_query.relevant_chunks.contains(&result.id))
+            .map(|result| evaluation_query.expected_documents.contains(&result.id))
             .unwrap_or(false);
 
         let first_relevant_rank = results
             .iter()
-            .position(|result| evaluation_query.relevant_chunks.contains(&result.id));
+            .position(|result| evaluation_query.expected_documents.contains(&result.id));
 
         let top_k_match = first_relevant_rank.is_some();
 
@@ -59,11 +59,14 @@ pub fn evaluate_detailed(
         println!();
         println!("Query {}/{}", index + 1, queries.len());
         println!("Query: {}", evaluation_query.query);
-        println!("Relevant chunks: {:?}", evaluation_query.relevant_chunks);
+        println!(
+            "Expected documents: {:?}",
+            evaluation_query.expected_documents
+        );
         println!();
 
         for (rank, result) in results.iter().enumerate() {
-            let marker = if evaluation_query.relevant_chunks.contains(&result.id) {
+            let marker = if evaluation_query.expected_documents.contains(&result.id) {
                 "✓"
             } else {
                 " "
