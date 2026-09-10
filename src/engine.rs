@@ -1,0 +1,71 @@
+use crate::database::Database;
+use crate::document::Document;
+use crate::embedding::EmbeddingClient;
+use crate::error::RecallError;
+use crate::pipeline::process_document;
+use crate::retrieval::{Retriever, SearchOptions};
+use crate::search_result::SearchResult;
+
+pub struct RecallEngine {
+    database: Database,
+    embedder: EmbeddingClient
+}
+
+impl RecallEngine {
+    pub fn new(embedding_url: String) -> Self {
+        Self {
+            database: Database::new(),
+            embedder: EmbeddingClient::new(embedding_url)
+        }
+    }
+
+    pub fn add_document(
+        &mut self,
+        document: &Document,
+        chunk_size: usize
+    ) -> Result<usize, RecallError> {
+        process_document(
+            document,
+            chunk_size,
+            &self.embedder,
+            &mut self.database
+        )
+    }
+
+    pub fn search(
+        &self,
+        query: &str,
+        options: SearchOptions
+    ) -> Result<Vec<SearchResult>, RecallError> {
+        let retriever =  Retriever::new(&self.database, &self.embedder);
+
+        retriever.search(query, options)
+    }
+
+    pub fn delete_document(&mut self, document_id: &str) -> usize {
+        self.database.delete_by_metadata(
+            "document_id",
+            &crate::metadata::MetadataValue::String(
+                document_id.to_string()
+            )
+        )
+    }
+
+    pub fn list_documents(&self) -> Vec<(String, usize)> {
+        self.database.list_documents()
+    }
+
+    pub fn save(&self, path: &str) -> Result<(), RecallError> {
+        self.database.save(path)
+    }
+
+    pub fn load(
+        path: &str,
+        embedding_url: String,
+    ) -> Result<Self, RecallError> {
+        Ok(Self {
+            database: Database::load(path)?,
+            embedder: EmbeddingClient::new(embedding_url),
+        })
+    }
+}

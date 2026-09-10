@@ -11,8 +11,10 @@ pub mod search_result;
 pub mod similarity;
 pub mod tokenizer;
 pub mod vector;
+pub mod engine;
 
 pub use database::Database;
 pub use document::{Document, load_from_file};
 pub use retrieval::{Retriever, SearchOptions};
 pub use search_result::SearchResult;
+pub use engine::RecallEngine;
