@@ -6,6 +6,7 @@ mod error;
 mod evaluation;
 mod metadata;
 mod pipeline;
+mod retriever;
 mod search_result;
 mod similarity;
 mod tokenizer;
@@ -245,16 +246,14 @@ fn main() -> Result<(), RecallError> {
         } => {
             let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8000".to_string());
 
-            let query_vector = embedder.embed(&query)?;
+            let retriever = retriever::Retriever::new(&database, &embedder);
 
             let results = match document {
-                Some(document_id) => database.search_with_filter(
-                    &query_vector,
-                    top_k,
-                    "document_id",
-                    &MetadataValue::String(document_id),
-                )?,
-                None => database.search(&query_vector, top_k)?,
+                Some(document_id) => {
+                    retriever.search_document(&query, &document_id, top_k)?
+                }
+
+                None => retriever.search(&query, top_k)?,
             };
 
             if results.is_empty() {
