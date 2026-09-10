@@ -16,14 +16,8 @@ pub struct Retriever<'a> {
 }
 
 impl<'a> Retriever<'a> {
-    pub fn new(
-        database: &'a Database,
-        embedder: &'a EmbeddingClient,
-    ) -> Self {
-        Self {
-            database,
-            embedder,
-        }
+    pub fn new(database: &'a Database, embedder: &'a EmbeddingClient) -> Self {
+        Self { database, embedder }
     }
 
     pub fn search(

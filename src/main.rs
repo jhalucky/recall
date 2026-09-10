@@ -1,26 +1,17 @@
-mod chunker;
-mod database;
-mod document;
-mod embedding;
-mod error;
-mod evaluation;
-mod metadata;
-mod pipeline;
-mod retriever;
-mod search_result;
-mod similarity;
-mod tokenizer;
-mod vector;
-
 use clap::{Parser, Subcommand};
 use std::collections::HashMap;
 use std::path::Path;
 use std::println;
 
-use crate::database::Database;
-use crate::error::RecallError;
-use crate::metadata::MetadataValue;
-use crate::vector::Vector;
+use recall::database::Database;
+use recall::document;
+use recall::embedding;
+use recall::error::RecallError;
+use recall::evaluation;
+use recall::metadata::MetadataValue;
+use recall::pipeline;
+use recall::retrieval;
+use recall::vector::Vector;
 
 #[derive(Parser, Debug)]
 #[command(name = "recall")]
@@ -246,15 +237,14 @@ fn main() -> Result<(), RecallError> {
         } => {
             let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8000".to_string());
 
-            let retriever = retriever::Retriever::new(&database, &embedder);
+            let retriever = retrieval::Retriever::new(&database, &embedder);
 
-            let results = match document {
-                Some(document_id) => {
-                    retriever.search_document(&query, &document_id, top_k)?
-                }
-
-                None => retriever.search(&query, top_k)?,
+            let options = retrieval::SearchOptions {
+                top_k,
+                document_id: document,
             };
+
+            let results = retriever.search(&query, options)?;
 
             if results.is_empty() {
                 println!("No results found.");
