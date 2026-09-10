@@ -4,3 +4,12 @@ __pycache__/
 *.pyc
 recall.json
 test_recall.json
+eval_results.txt
+git.txt
+linux.txt
+networking.txt
+operating_systems.txt
+python_ml.txt
+rust_long.txt
+rust.txt
+database.txt
