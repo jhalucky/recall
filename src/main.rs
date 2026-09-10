@@ -3,19 +3,13 @@ use std::collections::HashMap;
 use std::path::Path;
 use std::println;
 
-use recall::{
-    Database,
-    Document,
-    Retriever,
-    SearchOptions,
-    SearchResult,
-};
 use recall::embedding;
 use recall::error::RecallError;
 use recall::evaluation;
 use recall::metadata::MetadataValue;
 use recall::pipeline;
 use recall::vector::Vector;
+use recall::{Database, Document, Retriever, SearchOptions, SearchResult};
 
 #[derive(Parser, Debug)]
 #[command(name = "recall")]
@@ -246,6 +240,7 @@ fn main() -> Result<(), RecallError> {
             let options = SearchOptions {
                 top_k,
                 document_id: document,
+                min_score: None,
             };
 
             let results = retriever.search(&query, options)?;
