@@ -3,14 +3,18 @@ use std::collections::HashMap;
 use std::path::Path;
 use std::println;
 
-use recall::database::Database;
-use recall::document;
+use recall::{
+    Database,
+    Document,
+    Retriever,
+    SearchOptions,
+    SearchResult,
+};
 use recall::embedding;
 use recall::error::RecallError;
 use recall::evaluation;
 use recall::metadata::MetadataValue;
 use recall::pipeline;
-use recall::retrieval;
 use recall::vector::Vector;
 
 #[derive(Parser, Debug)]
@@ -216,7 +220,7 @@ fn main() -> Result<(), RecallError> {
         }
 
         Commands::AddDocument { path } => {
-            let document = document::load_from_file(&path)?;
+            let document = recall::load_from_file(&path)?;
 
             let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8000".to_string());
 
@@ -237,9 +241,9 @@ fn main() -> Result<(), RecallError> {
         } => {
             let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8000".to_string());
 
-            let retriever = retrieval::Retriever::new(&database, &embedder);
+            let retriever = Retriever::new(&database, &embedder);
 
-            let options = retrieval::SearchOptions {
+            let options = SearchOptions {
                 top_k,
                 document_id: document,
             };

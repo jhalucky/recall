@@ -1,12 +1,11 @@
 use std::collections::HashMap;
 use std::fs::File;
 
-use crate::document;
 use crate::error::RecallError;
 use crate::metadata::MetadataValue;
 use crate::search_result::SearchResult;
 use crate::similarity::cosine_similarity;
-use crate::vector::{self, Vector};
+use crate::vector::Vector;
 
 pub struct Database {
     vectors: HashMap<String, Vector>,

@@ -3,7 +3,7 @@ use crate::database::Database;
 use crate::document::Document;
 use crate::embedding::EmbeddingClient;
 use crate::error::RecallError;
-use crate::metadata::{self, MetadataValue};
+use crate::metadata::MetadataValue;
 use crate::vector::Vector;
 
 pub fn process_document(
