@@ -685,4 +685,42 @@ mod tests {
             vec![("python".to_string(), 1), ("rust".to_string(), 2),]
         );
     }
+
+    #[test]
+    fn test_insert_rejects_wrong_dimension() {
+        let mut database = Database::new(test_embedding_config(3));
+
+        let result = database.insert(Vector {
+            id: "wrong_dimension".to_string(),
+            values: vec![1.0, 2.0],
+            metadata: HashMap::new(),
+        });
+
+        assert!(matches!(
+            result,
+            Err(RecallError::DimensionMismatch {
+                query: 2,
+                stored: 3
+            })
+        ));
+    }
+
+    #[test]
+    fn test_upsert_rejects_wrong_dimension() {
+        let mut database = Database::new(test_embedding_config(3));
+
+        let result = database.upsert(Vector {
+            id: "wrong_dimension".to_string(),
+            values: vec![1.0, 2.0],
+            metadata: HashMap::new(),
+        });
+
+        assert!(matches!(
+            result,
+            Err(RecallError::DimensionMismatch {
+                query: 2,
+                stored: 3
+            })
+        ));
+    }
 }
