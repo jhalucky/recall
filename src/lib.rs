@@ -5,6 +5,7 @@ pub mod embedding;
 pub use embedding::{EmbeddingClient, EmbeddingProvider};
 pub mod engine;
 pub mod error;
+pub mod config;
 pub mod evaluation;
 pub mod metadata;
 pub mod pipeline;
