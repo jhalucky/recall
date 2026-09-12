@@ -2,6 +2,7 @@ pub mod chunker;
 pub mod database;
 pub mod document;
 pub mod embedding;
+pub use embedding::{EmbeddingClient, EmbeddingProvider};
 pub mod engine;
 pub mod error;
 pub mod evaluation;
