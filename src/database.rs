@@ -543,12 +543,12 @@ mod tests {
             })
             .unwrap();
 
-        let path = "test_recall.json";
+        let path = "test_save_database.json";
 
         database.save(path).unwrap();
 
         assert!(std::path::Path::new(path).exists());
-        // std::fs::remove_file(path).unwrap();
+        std::fs::remove_file(path).unwrap();
     }
 
     #[test]
@@ -563,17 +563,22 @@ mod tests {
             })
             .unwrap();
 
-        let path = "test_recall.json";
+        let path = "test_save_and_load_database.json";
 
         database.save(path).unwrap();
 
         let loaded_db = Database::load(path).unwrap();
+        assert_eq!(
+            loaded_db.embedding_config,
+            test_embedding_config(3)
+        );
+
         let result = loaded_db.get("doc_001").unwrap();
 
         assert_eq!(result.id, "doc_001");
         assert_eq!(result.values, vec![1.0, 2.0, 3.0]);
 
-        // std::fs::remove_file(path).unwrap();
+        std::fs::remove_file(path).unwrap();
     }
 
     #[test]
