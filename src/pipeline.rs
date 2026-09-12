@@ -9,7 +9,7 @@ use crate::vector::Vector;
 pub fn process_document(
     document: &Document,
     chunk_size: usize,
-    embedder: &EmbeddingClient,
+    embedder: &dyn EmbeddingProvider,
     database: &mut Database,
 ) -> Result<usize, RecallError> {
     let chunks = chunk_document(document, chunk_size, 1);

@@ -13,11 +13,11 @@ pub struct SearchOptions {
 
 pub struct Retriever<'a> {
     database: &'a Database,
-    embedder: &'a EmbeddingClient,
+    embedder: &'a dyn EmbeddingProvider,
 }
 
 impl<'a> Retriever<'a> {
-    pub fn new(database: &'a Database, embedder: &'a EmbeddingClient) -> Self {
+    pub fn new(database: &'a Database, embedder: &'a dyn EmbeddingProvider) -> Self {
         Self { database, embedder }
     }
 
