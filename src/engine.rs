@@ -1,6 +1,6 @@
 use crate::database::Database;
 use crate::document::Document;
-use crate::embedding::EmbeddingClient;
+use crate::embedding::{EmbeddingClient, EmbeddingProvider};
 use crate::error::RecallError;
 use crate::pipeline::process_document;
 use crate::retrieval::{Retriever, SearchOptions};
@@ -8,14 +8,14 @@ use crate::search_result::SearchResult;
 
 pub struct RecallEngine {
     database: Database,
-    embedder: EmbeddingClient,
+    embedder: Box<dyn EmbeddingProvider>
 }
 
 impl RecallEngine {
     pub fn new(embedding_url: String) -> Self {
         Self {
             database: Database::new(),
-            embedder: EmbeddingClient::new(embedding_url),
+            embedder: Box::new(EmbeddingClient::new(embedding_url)),
         }
     }
 
@@ -24,7 +24,7 @@ impl RecallEngine {
         document: &Document,
         chunk_size: usize,
     ) -> Result<usize, RecallError> {
-        process_document(document, chunk_size, &self.embedder, &mut self.database)
+        process_document(document, chunk_size, self.embedder.as_ref(), &mut self.database)
     }
 
     pub fn search(
@@ -32,7 +32,7 @@ impl RecallEngine {
         query: &str,
         options: SearchOptions,
     ) -> Result<Vec<SearchResult>, RecallError> {
-        let retriever = Retriever::new(&self.database, &self.embedder);
+        let retriever = Retriever::new(&self.database, self.embedder.as_ref());
 
         retriever.search(query, options)
     }
@@ -55,7 +55,7 @@ impl RecallEngine {
     pub fn load(path: &str, embedding_url: String) -> Result<Self, RecallError> {
         Ok(Self {
             database: Database::load(path)?,
-            embedder: EmbeddingClient::new(embedding_url),
+            embedder: Box::new(EmbeddingClient::new(embedding_url)),
         })
     }
 }
