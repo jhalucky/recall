@@ -2,7 +2,7 @@ use serde::Deserialize;
 use std::fs;
 
 use crate::database::Database;
-use crate::embedding::EmbeddingClient;
+use crate::embedding::{EmbeddingClient, EmbeddingProvider};
 use crate::error::RecallError;
 
 #[derive(Debug, Deserialize)]

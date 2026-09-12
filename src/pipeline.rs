@@ -1,7 +1,7 @@
 use crate::chunker::chunk_document;
 use crate::database::Database;
 use crate::document::Document;
-use crate::embedding::EmbeddingClient;
+use crate::embedding::{EmbeddingClient, EmbeddingProvider};
 use crate::error::RecallError;
 use crate::metadata::MetadataValue;
 use crate::vector::Vector;

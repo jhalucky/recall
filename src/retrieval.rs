@@ -1,5 +1,5 @@
 use crate::database::Database;
-use crate::embedding::EmbeddingClient;
+use crate::embedding::{EmbeddingClient, EmbeddingProvider};
 use crate::error::RecallError;
 use crate::metadata::MetadataValue;
 use crate::search_result::SearchResult;

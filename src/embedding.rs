@@ -12,6 +12,9 @@ struct EmbedResponse {
     embedding: Vec<f32>,
 }
 
+pub trait EmbeddingProvider {
+    fn embed(&self, text:&str) -> Result<Vec<f32>, RecallError>;
+}
 pub struct EmbeddingClient {
     base_url: String,
 }
@@ -20,8 +23,11 @@ impl EmbeddingClient {
     pub fn new(base_url: String) -> Self {
         Self { base_url }
     }
+}
 
-    pub fn embed(&self, text: &str) -> Result<Vec<f32>, RecallError> {
+impl EmbeddingProvider for EmbeddingClient {
+    
+    fn embed(&self, text: &str) -> Result<Vec<f32>, RecallError> {
         let client = reqwest::blocking::Client::new();
 
         let request = EmbedRequest {
