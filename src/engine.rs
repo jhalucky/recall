@@ -1,5 +1,6 @@
 use crate::database::Database;
 use crate::document::Document;
+use crate::config::EmbeddingConfig;
 use crate::embedding::{EmbeddingClient, EmbeddingProvider};
 use crate::error::RecallError;
 use crate::pipeline::process_document;
@@ -11,10 +12,13 @@ pub struct RecallEngine {
     embedder: Box<dyn EmbeddingProvider>
 }
 
-impl RecallEngine {
-    pub fn new(embedding_url: String) -> Self {
+    impl RecallEngine {
+        pub fn new(
+        embedding_url: String,
+        embedding_config: EmbeddingConfig,
+    ) -> Self { 
         Self {
-            database: Database::new(),
+            database: Database::new(embedding_config),
             embedder: Box::new(EmbeddingClient::new(embedding_url)),
         }
     }

@@ -41,7 +41,7 @@ pub fn process_document(
             metadata,
         };
 
-        database.upsert(vector);
+        database.upsert(vector)?;
 
         inserted += 1;
     }
@@ -52,6 +52,16 @@ pub fn process_document(
 #[cfg(test)]
 
 mod tests {
+    use crate::config::EmbeddingConfig;
+    
+    fn test_embedding_config() -> EmbeddingConfig {
+    EmbeddingConfig {
+        provider: "test".to_string(),
+        model: "test-model".to_string(),
+        dimension: 384,
+        version: "1".to_string(),
+    }
+}
     use std::{assert_eq, collections::HashMap, vec};
 
     use crate::{database, document, vector};
@@ -71,7 +81,7 @@ mod tests {
 
         let embedder = EmbeddingClient::new("http://127.0.0.1:8000".to_string());
 
-        let mut database = Database::new();
+        let mut database = Database::new(test_embedding_config());
 
         let inserted = process_document(&document, 4, &embedder, &mut database).unwrap();
 
@@ -111,7 +121,7 @@ mod tests {
 
         let embedder = EmbeddingClient::new("http://127.0.0.1:8000".to_string());
 
-        let mut database = Database::new();
+        let mut database = Database::new(test_embedding_config());
 
         process_document(&document, 8, &embedder, &mut database).unwrap();
 

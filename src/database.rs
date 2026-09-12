@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 use std::fs::File;
 
+use crate::config::EmbeddingConfig;
+use crate::{database, embedding};
 use crate::error::RecallError;
 use crate::metadata::MetadataValue;
 use crate::search_result::SearchResult;
@@ -9,19 +11,33 @@ use crate::vector::Vector;
 
 pub struct Database {
     vectors: HashMap<String, Vector>,
+    embedding_config: EmbeddingConfig,
+}
+
+
+#[derive(serde::Serialize, serde::Deserialize)]
+struct DatabaseFile {
+    vectors: HashMap<String, Vector>,
+    embedding_config: EmbeddingConfig,
 }
 
 impl Database {
-    pub fn new() -> Database {
+    pub fn new(embedding_config: EmbeddingConfig) -> Database {
         Database {
             vectors: HashMap::new(),
+            embedding_config
         }
     }
 
     pub fn insert(&mut self, vector: Vector) -> Result<(), RecallError> {
+        if vector.values.len() != self.embedding_config.dimension {
+            return Err(RecallError::DimensionMismatch { query: vector.values.len(), stored: self.embedding_config.dimension });
+        }
+
         if self.vectors.contains_key(&vector.id) {
             return Err(RecallError::VectorAlreadyExists);
         }
+
         self.vectors.insert(vector.id.clone(), vector);
 
         Ok(())
@@ -68,8 +84,13 @@ impl Database {
         result
     }
 
-    pub fn upsert(&mut self, vector: Vector) {
+    pub fn upsert(&mut self, vector: Vector) -> Result<(), RecallError> {
+        if vector.values.len() != self.embedding_config.dimension {
+            return Err(RecallError::DimensionMismatch { query: vector.values.len(), stored: self.embedding_config.dimension });
+        }
+
         self.vectors.insert(vector.id.clone(), vector);
+        Ok(())
     }
 
     pub fn search(&self, query: &[f32], top_k: usize) -> Result<Vec<SearchResult>, RecallError> {
@@ -110,17 +131,26 @@ impl Database {
     pub fn save(&self, path: &str) -> Result<(), RecallError> {
         let file = File::create(path)?;
 
-        serde_json::to_writer_pretty(file, &self.vectors)?;
+        let database_file = DatabaseFile {
+            vectors: self.vectors.clone(),
+            embedding_config: self.embedding_config.clone()
+        };
+
+        serde_json::to_writer_pretty(file, &database_file)?;
 
         Ok(())
     }
 
     pub fn load(path: &str) -> Result<Database, RecallError> {
         let file = File::open(path)?;
+        let database_file: DatabaseFile = serde_json::from_reader(file)?;
 
-        let vectors = serde_json::from_reader(file)?;
+        
 
-        Ok(Database { vectors })
+        Ok(Database { 
+            vectors: database_file.vectors,
+            embedding_config: database_file.embedding_config
+         })
     }
 
     pub fn search_with_filter(
@@ -170,6 +200,14 @@ impl Database {
 
 #[cfg(test)]
 mod tests {
+    fn test_embedding_config(dimension:usize) -> EmbeddingConfig {
+    EmbeddingConfig {
+        provider: "test".to_string(),
+        model: "test-model".to_string(),
+        dimension,
+        version: "1".to_string(),
+    }
+}
     use std::{assert_eq, fs::metadata, print, vec};
 
     use serde_json::error::Category::Data;
@@ -179,7 +217,7 @@ mod tests {
 
     #[test]
     fn test_insert_and_get_vector() {
-        let mut database = Database::new();
+        let mut database = Database::new(test_embedding_config(3));
 
         let vector = Vector {
             id: String::from("doc_001"),
@@ -198,7 +236,7 @@ mod tests {
 
     #[test]
     fn test_get_missing_vector() {
-        let database = Database::new();
+        let database = Database::new(test_embedding_config(2));
 
         let result = database.get("does not exist");
         assert!(result.is_none());
@@ -206,7 +244,7 @@ mod tests {
 
     #[test]
     fn test_search_returns_top_k_results() {
-        let mut database = Database::new();
+        let mut database = Database::new(test_embedding_config(2));
 
         database
             .insert(Vector {
@@ -253,7 +291,7 @@ mod tests {
 
     #[test]
     fn test_seacrh_top_k_larger_than_database() {
-        let mut database = Database::new();
+        let mut database = Database::new(test_embedding_config(2));
 
         database
             .insert(Vector {
@@ -279,7 +317,7 @@ mod tests {
 
     #[test]
     fn test_search_with_zero_top_k() {
-        let mut database = Database::new();
+        let mut database = Database::new(test_embedding_config(2));
 
         database
             .insert(Vector {
@@ -305,7 +343,7 @@ mod tests {
 
     #[test]
     fn test_delete_existing_vector() {
-        let mut database = Database::new();
+        let mut database = Database::new(test_embedding_config(3));
 
         database
             .insert(Vector {
@@ -326,7 +364,7 @@ mod tests {
 
     #[test]
     fn test_delete_missing_vector() {
-        let mut database = Database::new();
+        let mut database = Database::new(test_embedding_config(2));
 
         let deleted = database.delete("does_not_exist");
 
@@ -335,7 +373,7 @@ mod tests {
 
     #[test]
     fn test_vector_database() {
-        let mut database = Database::new();
+        let mut database = Database::new(test_embedding_config(3));
 
         let mut metadata = HashMap::new();
 
@@ -369,7 +407,7 @@ mod tests {
 
     #[test]
     fn test_search_with_filter() {
-        let mut database = Database::new();
+        let mut database = Database::new(test_embedding_config(2));
 
         let mut rust_metadata = HashMap::new();
 
@@ -447,7 +485,7 @@ mod tests {
 
     #[test]
     fn test_insert_rejects_duplicate_vector() {
-        let mut database = Database::new();
+        let mut database = Database::new(test_embedding_config(2));
 
         database
             .insert(Vector {
@@ -472,7 +510,7 @@ mod tests {
 
     #[test]
     fn test_upsert_replaces_existing_vector() {
-        let mut database = Database::new();
+        let mut database = Database::new(test_embedding_config(2));
 
         database
             .insert(Vector {
@@ -495,7 +533,7 @@ mod tests {
 
     #[test]
     fn test_save_database() {
-        let mut database = Database::new();
+        let mut database = Database::new(test_embedding_config(3));
 
         database
             .insert(Vector {
@@ -515,7 +553,7 @@ mod tests {
 
     #[test]
     fn test_save_and_load_database() {
-        let mut database = Database::new();
+        let mut database = Database::new(test_embedding_config(3));
 
         database
             .insert(Vector {
@@ -540,7 +578,7 @@ mod tests {
 
     #[test]
     fn test_delete_by_metadata() {
-        let mut database = Database::new();
+        let mut database = Database::new(test_embedding_config(2));
 
         let mut metadata_1 = HashMap::new();
         metadata_1.insert(
@@ -596,7 +634,7 @@ mod tests {
 
     #[test]
     fn test_list_documents() {
-        let mut database = Database::new();
+        let mut database = Database::new(test_embedding_config(2));
 
         let mut rust_metadata = HashMap::new();
         rust_metadata.insert(

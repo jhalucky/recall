@@ -1,8 +1,17 @@
-use recall::{Document, RecallEngine, SearchOptions};
+use recall::{Document, EmbeddingConfig, RecallEngine, SearchOptions};
 use std::{collections::HashMap, println};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut recall = RecallEngine::new("http://127.0.0.1:8000".to_string());
+    let mut recall = RecallEngine::new(
+        "http://127.0.0.1:8000".to_string(),
+        EmbeddingConfig {
+            provider: "sentence-transformers".to_string(),
+            model: "all-MiniLM-L6-v2".to_string(),
+            dimension: 384,
+            version: "1".to_string()
+        }
+    
+    );
 
     let document = Document {
         id: "networking".to_string(),

@@ -8,6 +8,7 @@ use recall::error::RecallError;
 use recall::evaluation;
 use recall::metadata::MetadataValue;
 use recall::pipeline;
+use recall::EmbeddingConfig;
 use recall::vector::Vector;
 use recall::{Database, Retriever, SearchOptions};
 
@@ -92,7 +93,12 @@ fn main() -> Result<(), RecallError> {
     if Path::new("recall.json").exists() {
         database = Database::load("recall.json")?;
     } else {
-        database = Database::new();
+        database = Database::new(EmbeddingConfig {
+        provider: "sentence-transformers".to_string(),
+        model: "all-MiniLM-L6-v2".to_string(),
+        dimension: 384,
+        version: "1".to_string(),
+    });
     }
 
     let cli = Cli::parse();
@@ -207,7 +213,7 @@ fn main() -> Result<(), RecallError> {
                 metadata: HashMap::new(),
             };
 
-            database.upsert(vector);
+            database.upsert(vector)?;
             database.save("recall.json")?;
 
             println!("Vector upserted successfully!");
