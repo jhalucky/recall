@@ -2,7 +2,7 @@ use serde::Deserialize;
 use std::fs;
 
 use crate::database::Database;
-use crate::embedding::{EmbeddingClient, EmbeddingProvider};
+use crate::embedding::EmbeddingProvider;
 use crate::error::RecallError;
 
 #[derive(Debug, Deserialize)]
@@ -20,7 +20,7 @@ pub fn load_queries(path: &str) -> Result<Vec<EvaluationQuery>, RecallError> {
 
 pub fn evaluate_detailed(
     database: &Database,
-    embedder: &EmbeddingClient,
+    embedder: &dyn EmbeddingProvider,
     queries: &[EvaluationQuery],
     top_k: usize,
 ) -> Result<(usize, usize, f32), RecallError> {
