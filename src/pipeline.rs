@@ -19,7 +19,7 @@ pub fn process_document(
     for chunk in chunks {
         let embedding = embedder.embed(&chunk.text)?;
 
-        let mut metadata = document.metadata.clone();
+        let mut metadata = chunk.metadata.clone();
 
         metadata.insert(
             "document_id".to_string(),

@@ -9,7 +9,7 @@ use recall::evaluation;
 use recall::metadata::MetadataValue;
 use recall::pipeline;
 use recall::vector::Vector;
-use recall::{Database, Document, Retriever, SearchOptions, SearchResult};
+use recall::{Database, Retriever, SearchOptions};
 
 #[derive(Parser, Debug)]
 #[command(name = "recall")]
@@ -104,7 +104,7 @@ fn main() -> Result<(), RecallError> {
                     println!("No results found.");
                 } else {
                     for result in results {
-                        println!("{} → {}", result.id, result.score);
+                        println!("{} → {}", result.chunk_id, result.score);
                     }
                 }
             }
@@ -251,7 +251,7 @@ fn main() -> Result<(), RecallError> {
                 println!("Search results for: \"{}\"", query);
 
                 for result in results {
-                    println!("{} -> {}", result.id, result.score);
+                    println!("{} -> {}", result.chunk_id, result.score);
                     println!(" Document: {}", result.document_id);
                     println!(" Chunk: {}", result.chunk_index);
                     println!(" {}", result.text);

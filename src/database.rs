@@ -79,12 +79,12 @@ impl Database {
             let score = cosine_similarity(query, &vector.values)?;
 
             results.push(SearchResult {
-                id: vector.id.clone(),
-                score,
                 document_id: match vector.metadata.get("document_id") {
                     Some(MetadataValue::String(id)) => id.clone(),
                     _ => String::new(),
                 },
+
+                chunk_id: vector.id.clone(),
 
                 chunk_index: match vector.metadata.get("chunk_index") {
                     Some(MetadataValue::Integer(index)) => *index as usize,
@@ -95,6 +95,8 @@ impl Database {
                     Some(MetadataValue::String(text)) => text.clone(),
                     _ => String::new(),
                 },
+                score,
+                metadata: vector.metadata.clone()
             });
         }
 
@@ -138,12 +140,11 @@ impl Database {
             let score = cosine_similarity(query, &vector.values)?;
 
             results.push(SearchResult {
-                id: vector.id.clone(),
-                score,
                 document_id: match vector.metadata.get("document_id") {
                     Some(MetadataValue::String(id)) => id.clone(),
                     _ => String::new(),
                 },
+                chunk_id: vector.id.clone(),
 
                 chunk_index: match vector.metadata.get("chunk_index") {
                     Some(MetadataValue::Integer(index)) => *index as usize,
@@ -154,6 +155,8 @@ impl Database {
                     Some(MetadataValue::String(text)) => text.clone(),
                     _ => String::new(),
                 },
+                score,
+                metadata: vector.metadata.clone()
             });
         }
 
@@ -207,25 +210,34 @@ mod tests {
 
         database
             .insert(Vector {
-                id: String::from("doc_001"),
+                id: "doc_001".to_string(),
                 values: vec![1.0, 0.0],
-                metadata: HashMap::new(),
+                metadata: HashMap::from([(
+                    "document_id".to_string(),
+                    MetadataValue::String("doc_001".to_string())
+                )]),
             })
             .unwrap();
 
         database
             .insert(Vector {
-                id: String::from("doc_002"),
+                id: "doc_002".to_string(),
                 values: vec![0.0, 1.0],
-                metadata: HashMap::new(),
+                metadata: HashMap::from([(
+                    "document_id".to_string(),
+                    MetadataValue::String("doc_002".to_string())
+                )]),
             })
             .unwrap();
 
         database
             .insert(Vector {
-                id: String::from("doc_003"),
+                id: "doc_003".to_string(),
                 values: vec![0.8, 0.2],
-                metadata: HashMap::new(),
+                metadata: HashMap::from([(
+                    "document_id".to_string(),
+                    MetadataValue::String("doc_003".to_string())
+                )]),
             })
             .unwrap();
 
@@ -235,8 +247,8 @@ mod tests {
 
         assert_eq!(results.len(), 2);
 
-        assert_eq!(results[0].id, "doc_001");
-        assert_eq!(results[1].id, "doc_003");
+        assert_eq!(results[0].document_id, "doc_001");
+        assert_eq!(results[1].document_id, "doc_003");
     }
 
     #[test]
@@ -366,6 +378,11 @@ mod tests {
             MetadataValue::String(String::from("programming")),
         );
 
+        rust_metadata.insert(
+            String::from("document_id"),
+            MetadataValue::String(String::from("doc_001")),
+        );
+
         database
             .insert(Vector {
                 id: String::from("doc_001"),
@@ -381,6 +398,11 @@ mod tests {
             MetadataValue::String(String::from("cooking")),
         );
 
+        cooking_metadata.insert(
+            String::from("document_id"),
+            MetadataValue::String(String::from("doc_002")),
+        );
+
         database
             .insert(Vector {
                 id: String::from("doc_002"),
@@ -394,6 +416,11 @@ mod tests {
         python_metadata.insert(
             String::from("category"),
             MetadataValue::String(String::from("programming")),
+        );
+
+        python_metadata.insert(
+            String::from("document_id"),
+            MetadataValue::String(String::from("doc_003")),
         );
 
         database
@@ -414,8 +441,8 @@ mod tests {
 
         assert_eq!(results.len(), 2);
 
-        assert_eq!(results[0].id, "doc_001");
-        assert_eq!(results[1].id, "doc_003");
+        assert_eq!(results[0].document_id, "doc_001");
+        assert_eq!(results[1].document_id, "doc_003");
     }
 
     #[test]
