@@ -774,4 +774,72 @@ mod tests {
             })
         ));
     }
+
+    #[test]
+    fn test_search_with_multiple_filters() {
+        let mut database = Database::new(test_embedding_config(3));
+
+        database
+            .insert(Vector {
+                id: "vector_1".to_string(),
+                values: vec![1.0, 0.0, 0.0],
+                metadata: {
+                    let mut metadata = HashMap::new();
+                    metadata.insert(
+                        "subject".to_string(),
+                        MetadataValue::String("DBMS".to_string()),
+                    );
+                    metadata.insert("semester".to_string(), MetadataValue::Integer(5));
+                    metadata
+                },
+            })
+            .unwrap();
+
+        database
+            .insert(Vector {
+                id: "vector_2".to_string(),
+                values: vec![0.9, 0.1, 0.0],
+                metadata: {
+                    let mut metadata = HashMap::new();
+                    metadata.insert(
+                        "subject".to_string(),
+                        MetadataValue::String("OS".to_string()),
+                    );
+                    metadata.insert("semester".to_string(), MetadataValue::Integer(5));
+                    metadata
+                },
+            })
+            .unwrap();
+
+        database
+            .insert(Vector {
+                id: "vector_3".to_string(),
+                values: vec![0.8, 0.2, 0.0],
+                metadata: {
+                    let mut metadata = HashMap::new();
+                    metadata.insert(
+                        "subject".to_string(),
+                        MetadataValue::String("DBMS".to_string()),
+                    );
+                    metadata.insert("semester".to_string(), MetadataValue::Integer(4));
+                    metadata
+                },
+            })
+            .unwrap();
+
+        let filters = vec![
+            MetadataFilter::new(
+                "subject".to_string(),
+                MetadataValue::String("DBMS".to_string()),
+            ),
+            MetadataFilter::new("semester".to_string(), MetadataValue::Integer(5)),
+        ];
+
+        let results = database
+            .search_with_filters(&[1.0, 0.0, 0.0], 10, &filters)
+            .unwrap();
+
+        assert_eq!(results.len(), 1);
+        assert_eq!(results[0].chunk_id, "vector_1");
+    }
 }

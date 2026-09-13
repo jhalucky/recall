@@ -10,6 +10,7 @@ pub struct SearchOptions {
     pub top_k: usize,
     pub document_id: Option<String>,
     pub min_score: Option<f32>,
+    pub filters: Vec<MetadataFilter>
 }
 
 pub struct Retriever<'a> {

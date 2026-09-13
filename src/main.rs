@@ -247,6 +247,7 @@ fn main() -> Result<(), RecallError> {
                 top_k,
                 document_id: document,
                 min_score: None,
+                filters: Vec::new()
             };
 
             let results = retriever.search(&query, options)?;
