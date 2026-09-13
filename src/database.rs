@@ -2,12 +2,12 @@ use std::collections::HashMap;
 use std::fs::File;
 
 use crate::config::EmbeddingConfig;
-use crate::{database, embedding};
 use crate::error::RecallError;
 use crate::metadata::MetadataValue;
 use crate::search_result::SearchResult;
 use crate::similarity::cosine_similarity;
 use crate::vector::Vector;
+use crate::filter::MetadataFilter;
 
 pub struct Database {
     vectors: HashMap<String, Vector>,
@@ -153,17 +153,17 @@ impl Database {
          })
     }
 
+    
     pub fn search_with_filter(
         &self,
         query: &[f32],
         top_k: usize,
-        key: &str,
-        value: &MetadataValue,
+        filter: &MetadataFilter,
     ) -> Result<Vec<SearchResult>, RecallError> {
         let mut results = Vec::new();
 
         for vector in self.vectors.values() {
-            if vector.metadata.get(key) != Some(value) {
+            if !filter.matches(&vector.metadata) {
                 continue;
             }
 
@@ -474,7 +474,7 @@ mod tests {
         let filter_value = MetadataValue::String(String::from("programming"));
 
         let results = database
-            .search_with_filter(&query, 10, "category", &filter_value)
+            .search_with_filter(&query, 10, &MetadataFilter::new("category".to_string(), filter_value))
             .unwrap();
 
         assert_eq!(results.len(), 2);
