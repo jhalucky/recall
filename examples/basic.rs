@@ -26,7 +26,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             top_k: 3,
             document_id: None,
             min_score: Some(0.3),
-            filters: Vec::new()
+            filters: Vec::new(),
         },
     )?;
 
