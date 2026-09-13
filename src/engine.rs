@@ -1,6 +1,6 @@
+use crate::config::EmbeddingConfig;
 use crate::database::Database;
 use crate::document::Document;
-use crate::config::EmbeddingConfig;
 use crate::embedding::{EmbeddingClient, EmbeddingProvider};
 use crate::error::RecallError;
 use crate::pipeline::process_document;
@@ -9,14 +9,11 @@ use crate::search_result::SearchResult;
 
 pub struct RecallEngine {
     database: Database,
-    embedder: Box<dyn EmbeddingProvider>
+    embedder: Box<dyn EmbeddingProvider>,
 }
 
-    impl RecallEngine {
-        pub fn new(
-        embedding_url: String,
-        embedding_config: EmbeddingConfig,
-    ) -> Self { 
+impl RecallEngine {
+    pub fn new(embedding_url: String, embedding_config: EmbeddingConfig) -> Self {
         Self {
             database: Database::new(embedding_config),
             embedder: Box::new(EmbeddingClient::new(embedding_url)),
@@ -28,7 +25,12 @@ pub struct RecallEngine {
         document: &Document,
         chunk_size: usize,
     ) -> Result<usize, RecallError> {
-        process_document(document, chunk_size, self.embedder.as_ref(), &mut self.database)
+        process_document(
+            document,
+            chunk_size,
+            self.embedder.as_ref(),
+            &mut self.database,
+        )
     }
 
     pub fn search(

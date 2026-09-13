@@ -3,17 +3,16 @@ use std::fs::File;
 
 use crate::config::EmbeddingConfig;
 use crate::error::RecallError;
+use crate::filter::MetadataFilter;
 use crate::metadata::MetadataValue;
 use crate::search_result::SearchResult;
 use crate::similarity::cosine_similarity;
 use crate::vector::Vector;
-use crate::filter::MetadataFilter;
 
 pub struct Database {
     vectors: HashMap<String, Vector>,
     embedding_config: EmbeddingConfig,
 }
-
 
 #[derive(serde::Serialize, serde::Deserialize)]
 struct DatabaseFile {
@@ -25,13 +24,16 @@ impl Database {
     pub fn new(embedding_config: EmbeddingConfig) -> Database {
         Database {
             vectors: HashMap::new(),
-            embedding_config
+            embedding_config,
         }
     }
 
     pub fn insert(&mut self, vector: Vector) -> Result<(), RecallError> {
         if vector.values.len() != self.embedding_config.dimension {
-            return Err(RecallError::DimensionMismatch { query: vector.values.len(), stored: self.embedding_config.dimension });
+            return Err(RecallError::DimensionMismatch {
+                query: vector.values.len(),
+                stored: self.embedding_config.dimension,
+            });
         }
 
         if self.vectors.contains_key(&vector.id) {
@@ -86,7 +88,10 @@ impl Database {
 
     pub fn upsert(&mut self, vector: Vector) -> Result<(), RecallError> {
         if vector.values.len() != self.embedding_config.dimension {
-            return Err(RecallError::DimensionMismatch { query: vector.values.len(), stored: self.embedding_config.dimension });
+            return Err(RecallError::DimensionMismatch {
+                query: vector.values.len(),
+                stored: self.embedding_config.dimension,
+            });
         }
 
         self.vectors.insert(vector.id.clone(), vector);
@@ -117,7 +122,7 @@ impl Database {
                     _ => String::new(),
                 },
                 score,
-                metadata: vector.metadata.clone()
+                metadata: vector.metadata.clone(),
             });
         }
 
@@ -133,7 +138,7 @@ impl Database {
 
         let database_file = DatabaseFile {
             vectors: self.vectors.clone(),
-            embedding_config: self.embedding_config.clone()
+            embedding_config: self.embedding_config.clone(),
         };
 
         serde_json::to_writer_pretty(file, &database_file)?;
@@ -145,15 +150,12 @@ impl Database {
         let file = File::open(path)?;
         let database_file: DatabaseFile = serde_json::from_reader(file)?;
 
-        
-
-        Ok(Database { 
+        Ok(Database {
             vectors: database_file.vectors,
-            embedding_config: database_file.embedding_config
-         })
+            embedding_config: database_file.embedding_config,
+        })
     }
 
-    
     pub fn search_with_filter(
         &self,
         query: &[f32],
@@ -186,7 +188,7 @@ impl Database {
                     _ => String::new(),
                 },
                 score,
-                metadata: vector.metadata.clone()
+                metadata: vector.metadata.clone(),
             });
         }
 
@@ -196,18 +198,61 @@ impl Database {
 
         Ok(results)
     }
+
+    pub fn search_with_filters(
+        &self,
+        query: &[f32],
+        top_k: usize,
+        filters: &[MetadataFilter],
+    ) -> Result<Vec<SearchResult>, RecallError> {
+        let mut results = Vec::new();
+
+        for vector in self.vectors.values() {
+            if !filters
+                .iter()
+                .all(|filter| filter.matches(&vector.metadata))
+            {
+                continue;
+            }
+
+            let score = cosine_similarity(query, &vector.values)?;
+
+            results.push(SearchResult {
+                document_id: match vector.metadata.get("document_id") {
+                    Some(MetadataValue::String(id)) => id.clone(),
+                    _ => String::new(),
+                },
+                chunk_id: vector.id.clone(),
+                chunk_index: match vector.metadata.get("chunk_index") {
+                    Some(MetadataValue::Integer(index)) => *index as usize,
+                    _ => 0,
+                },
+                text: match vector.metadata.get("text") {
+                    Some(MetadataValue::String(text)) => text.clone(),
+                    _ => String::new(),
+                },
+                score,
+                metadata: vector.metadata.clone(),
+            });
+        }
+
+        results.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap());
+        results.truncate(top_k);
+
+        Ok(results)
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    fn test_embedding_config(dimension:usize) -> EmbeddingConfig {
-    EmbeddingConfig {
-        provider: "test".to_string(),
-        model: "test-model".to_string(),
-        dimension,
-        version: "1".to_string(),
+    fn test_embedding_config(dimension: usize) -> EmbeddingConfig {
+        EmbeddingConfig {
+            provider: "test".to_string(),
+            model: "test-model".to_string(),
+            dimension,
+            version: "1".to_string(),
+        }
     }
-}
     use std::{assert_eq, fs::metadata, print, vec};
 
     use serde_json::error::Category::Data;
@@ -252,7 +297,7 @@ mod tests {
                 values: vec![1.0, 0.0],
                 metadata: HashMap::from([(
                     "document_id".to_string(),
-                    MetadataValue::String("doc_001".to_string())
+                    MetadataValue::String("doc_001".to_string()),
                 )]),
             })
             .unwrap();
@@ -263,7 +308,7 @@ mod tests {
                 values: vec![0.0, 1.0],
                 metadata: HashMap::from([(
                     "document_id".to_string(),
-                    MetadataValue::String("doc_002".to_string())
+                    MetadataValue::String("doc_002".to_string()),
                 )]),
             })
             .unwrap();
@@ -274,7 +319,7 @@ mod tests {
                 values: vec![0.8, 0.2],
                 metadata: HashMap::from([(
                     "document_id".to_string(),
-                    MetadataValue::String("doc_003".to_string())
+                    MetadataValue::String("doc_003".to_string()),
                 )]),
             })
             .unwrap();
@@ -474,7 +519,11 @@ mod tests {
         let filter_value = MetadataValue::String(String::from("programming"));
 
         let results = database
-            .search_with_filter(&query, 10, &MetadataFilter::new("category".to_string(), filter_value))
+            .search_with_filter(
+                &query,
+                10,
+                &MetadataFilter::new("category".to_string(), filter_value),
+            )
             .unwrap();
 
         assert_eq!(results.len(), 2);
@@ -568,10 +617,7 @@ mod tests {
         database.save(path).unwrap();
 
         let loaded_db = Database::load(path).unwrap();
-        assert_eq!(
-            loaded_db.embedding_config,
-            test_embedding_config(3)
-        );
+        assert_eq!(loaded_db.embedding_config, test_embedding_config(3));
 
         let result = loaded_db.get("doc_001").unwrap();
 

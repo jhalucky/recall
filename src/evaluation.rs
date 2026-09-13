@@ -35,12 +35,18 @@ pub fn evaluate_detailed(
 
         let top_1_match = results
             .first()
-            .map(|result| evaluation_query.expected_documents.contains(&result.document_id))
+            .map(|result| {
+                evaluation_query
+                    .expected_documents
+                    .contains(&result.document_id)
+            })
             .unwrap_or(false);
 
-        let first_relevant_rank = results
-            .iter()
-            .position(|result| evaluation_query.expected_documents.contains(&result.document_id));
+        let first_relevant_rank = results.iter().position(|result| {
+            evaluation_query
+                .expected_documents
+                .contains(&result.document_id)
+        });
 
         let top_k_match = first_relevant_rank.is_some();
 
@@ -66,7 +72,10 @@ pub fn evaluate_detailed(
         println!();
 
         for (rank, result) in results.iter().enumerate() {
-            let marker = if evaluation_query.expected_documents.contains(&result.document_id) {
+            let marker = if evaluation_query
+                .expected_documents
+                .contains(&result.document_id)
+            {
                 "✓"
             } else {
                 " "

@@ -54,15 +54,15 @@ pub fn process_document(
 mod tests {
     use crate::config::EmbeddingConfig;
     use crate::embedding::{EmbeddingClient, EmbeddingProvider};
-    
+
     fn test_embedding_config() -> EmbeddingConfig {
-    EmbeddingConfig {
-        provider: "test".to_string(),
-        model: "test-model".to_string(),
-        dimension: 384,
-        version: "1".to_string(),
+        EmbeddingConfig {
+            provider: "test".to_string(),
+            model: "test-model".to_string(),
+            dimension: 384,
+            version: "1".to_string(),
+        }
     }
-}
     use std::{assert_eq, collections::HashMap, vec};
 
     use crate::{database, document, vector};

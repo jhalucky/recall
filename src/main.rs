@@ -3,12 +3,12 @@ use std::collections::HashMap;
 use std::path::Path;
 use std::println;
 
+use recall::EmbeddingConfig;
 use recall::embedding;
 use recall::error::RecallError;
 use recall::evaluation;
 use recall::metadata::MetadataValue;
 use recall::pipeline;
-use recall::EmbeddingConfig;
 use recall::vector::Vector;
 use recall::{Database, Retriever, SearchOptions};
 
@@ -94,11 +94,11 @@ fn main() -> Result<(), RecallError> {
         database = Database::load("recall.json")?;
     } else {
         database = Database::new(EmbeddingConfig {
-        provider: "sentence-transformers".to_string(),
-        model: "all-MiniLM-L6-v2".to_string(),
-        dimension: 384,
-        version: "1".to_string(),
-    });
+            provider: "sentence-transformers".to_string(),
+            model: "all-MiniLM-L6-v2".to_string(),
+            dimension: 384,
+            version: "1".to_string(),
+        });
     }
 
     let cli = Cli::parse();

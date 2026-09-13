@@ -8,9 +8,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             provider: "sentence-transformers".to_string(),
             model: "all-MiniLM-L6-v2".to_string(),
             dimension: 384,
-            version: "1".to_string()
-        }
-    
+            version: "1".to_string(),
+        },
     );
 
     let document = Document {
