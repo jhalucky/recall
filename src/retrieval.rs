@@ -246,7 +246,7 @@ mod tests {
     }
 
     #[test]
-    fn test_Search_With_diagnostics() {
+    fn test_search_With_diagnostics() {
         let mut database = Database::new(test_embedding_config());
 
         let mut metadata = HashMap::new();
