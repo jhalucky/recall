@@ -110,8 +110,8 @@ impl<'a> Retriever<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::vector::Vector;
-    use std::collections::HashMap;
+    use crate::{metadata, vector::Vector};
+    use std::{assert_eq, collections::HashMap, vec};
 
     struct TestEmbedder;
 
@@ -243,5 +243,44 @@ mod tests {
 
         assert_eq!(results.len(), 1);
         assert_eq!(results[0].chunk_id, "chunk_1");
+    }
+
+    #[test]
+    fn test_Search_With_diagnostics() {
+        let mut database = Database::new(test_embedding_config());
+
+        let mut metadata = HashMap::new();
+        metadata.insert(
+            "subject".to_string(),
+            MetadataValue::String("DBMS".to_string())
+        );
+
+        database
+            .insert(Vector {
+                id: "chunk_1".to_string(),
+                values: vec![1.0, 0.0, 0.0],
+                metadata
+            })
+            .unwrap();
+
+        let embedder = TestEmbedder;
+        let retriever = Retriever::new(&database, &embedder);
+
+        let options = SearchOptions {
+            top_k: 10,
+            document_id: None,
+            min_score: None,
+            filters: vec![]
+        };
+
+        let (results, diagnostics) = retriever
+            .search_with_diagnostics("database systems", options)
+            .unwrap();
+
+
+        assert_eq!(results.len(), 1);
+        assert_eq!(diagnostics.candidates, 1);
+        assert_eq!(diagnostics.results_before_min_score, 1);
+        assert_eq!(diagnostics.results_after_min_score, 1);
     }
 }
