@@ -17,6 +17,8 @@ pub mod search_result;
 pub mod similarity;
 pub mod tokenizer;
 pub mod vector;
+pub mod diagnostics;
+pub use diagnostics::RetrievalDiagnostics;
 
 pub use database::Database;
 pub use document::{Document, load_from_file};

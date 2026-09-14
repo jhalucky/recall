@@ -4,6 +4,7 @@ use crate::error::RecallError;
 use crate::filter::MetadataFilter;
 use crate::metadata::MetadataValue;
 use crate::search_result::SearchResult;
+use crate::diagnostics::RetrievalDiagnostics;
 
 #[derive(Debug, Clone, Default)]
 pub struct SearchOptions {
@@ -56,6 +57,53 @@ impl<'a> Retriever<'a> {
         };
 
         Ok(results)
+    }
+
+    pub fn search_with_diagnostics(
+        &self,
+        query: &str,
+        options: SearchOptions
+    ) -> Result<(Vec<SearchResult>, RetrievalDiagnostics), RecallError> {
+        let query_vector = self.embedder.embed(query)?;
+
+        let mut filters = options.filters.clone();
+
+        if let Some(document_id) = options.document_id.as_ref() {
+            filters.push(MetadataFilter::new(
+                "document_id".to_string(),
+                MetadataValue::String(document_id.clone())
+            ));
+        }
+
+        let candidates = if filters.is_empty() {
+            self.database.search(&query_vector, options.top_k)?
+        } else {
+            self.database
+                .search_with_filters(&query_vector, options.top_k, &filters)?
+        };
+
+        let candidates_count = candidates.len();
+
+        let results_before_min_score = candidates.len();
+
+        let results = if let Some(min_score) = options.min_score {
+            candidates
+                .into_iter()
+                .filter(|result| result.score >= min_score)
+                .collect()
+        } else {
+            candidates
+        };
+
+        let results_after_min_score = results.len();
+
+        let diagnostics = RetrievalDiagnostics {
+            candidates: candidates_count,
+            results_before_min_score,
+            results_after_min_score
+        };
+
+        Ok((results, diagnostics))
     }
 }
 
