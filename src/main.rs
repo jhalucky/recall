@@ -1,7 +1,9 @@
+use clap::builder::Str;
 use clap::{Parser, Subcommand};
 use std::collections::HashMap;
 use std::path::Path;
 use std::println;
+use std::net::SocketAddr;
 
 use recall::EmbeddingConfig;
 use recall::embedding;
@@ -10,6 +12,7 @@ use recall::evaluation;
 use recall::metadata::MetadataValue;
 use recall::pipeline;
 use recall::vector::Vector;
+use recall::api::create_router;
 use recall::{Database, Retriever, SearchOptions};
 
 #[derive(Parser, Debug)]
@@ -84,9 +87,17 @@ enum Commands {
         #[arg(long, default_value_t = 3)]
         top_k: usize,
     },
-}
 
-fn main() -> Result<(), RecallError> {
+    Serve {
+        #[arg(long, default_value = "127.0.0.1")]
+        host: String,
+
+        #[arg(long, default_value_t = 3000)]
+        port: u16,
+    }
+}
+#[tokio::main] 
+async fn main() -> Result<(), RecallError> {
     let mut database;
 
     // Load existing database or create a new one.
@@ -222,7 +233,7 @@ fn main() -> Result<(), RecallError> {
         Commands::AddDocument { path } => {
             let document = recall::load_from_file(&path)?;
 
-            let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8000".to_string());
+            let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8001".to_string());
 
             let inserted = pipeline::process_document(&document, 100, &embedder, &mut database)?;
 
@@ -239,7 +250,7 @@ fn main() -> Result<(), RecallError> {
             top_k,
             document,
         } => {
-            let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8000".to_string());
+            let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8001".to_string());
 
             let retriever = Retriever::new(&database, &embedder);
 
@@ -267,6 +278,30 @@ fn main() -> Result<(), RecallError> {
             }
         }
 
+        Commands::Serve { host, port } => {
+            let app = create_router();
+
+            let address: SocketAddr = format!("{}:{}",host,port)
+                .parse()
+                .map_err(|error| {
+                    RecallError::IoError(std::io::Error::new(
+                        std::io::ErrorKind::InvalidInput,
+                        error
+                    ))
+                })?;
+
+            println!("RECALL API listening on http://{}",port);
+
+            let listener = tokio::net::TcpListener::bind(address)
+                .await
+                .map_err(RecallError::IoError)?;
+
+            axum::serve(listener, app)
+                .await
+                .map_err(RecallError::IoError)?;
+
+        }
+
         Commands::Eval { queries, top_k } => {
             let evaluation_queries = evaluation::load_queries(&queries)?;
 
@@ -275,7 +310,7 @@ fn main() -> Result<(), RecallError> {
                 return Ok(());
             }
 
-            let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8000".to_string());
+            let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8001".to_string());
 
             let (top_1_correct, top_k_correct, mrr) =
                 evaluation::evaluate_detailed(&database, &embedder, &evaluation_queries, top_k)?;

@@ -57,7 +57,7 @@ mod tests {
 
     #[test]
     fn test_embedding_client() {
-        let client = EmbeddingClient::new("http://127.0.0.1:8000".to_string());
+        let client = EmbeddingClient::new("http://127.0.0.1:8001".to_string());
 
         let embedding = client
             .embed("Rust is a systems programming language")

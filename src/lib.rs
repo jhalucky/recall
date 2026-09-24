@@ -19,7 +19,7 @@ pub mod tokenizer;
 pub mod vector;
 pub mod diagnostics;
 pub use diagnostics::RetrievalDiagnostics;
-
+pub mod api;
 pub use database::Database;
 pub use document::{Document, load_from_file};
 pub use engine::RecallEngine;

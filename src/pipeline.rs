@@ -80,7 +80,7 @@ mod tests {
             metadata: HashMap::new(),
         };
 
-        let embedder = EmbeddingClient::new("http://127.0.0.1:8000".to_string());
+        let embedder = EmbeddingClient::new("http://127.0.0.1:8001".to_string());
 
         let mut database = Database::new(test_embedding_config());
 
@@ -120,7 +120,7 @@ mod tests {
             metadata: HashMap::new(),
         };
 
-        let embedder = EmbeddingClient::new("http://127.0.0.1:8000".to_string());
+        let embedder = EmbeddingClient::new("http://127.0.0.1:8001".to_string());
 
         let mut database = Database::new(test_embedding_config());
 

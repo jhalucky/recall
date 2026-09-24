@@ -109,8 +109,10 @@ impl<'a> Retriever<'a> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::{metadata, vector::Vector};
+    use serde_json::error::Category::Data;
+
+use super::*;
+    use crate::{diagnostics, metadata, vector::Vector};
     use std::{assert_eq, collections::HashMap, vec};
 
     struct TestEmbedder;
@@ -246,7 +248,7 @@ mod tests {
     }
 
     #[test]
-    fn test_search_With_diagnostics() {
+    fn test_search_with_diagnostics() {
         let mut database = Database::new(test_embedding_config());
 
         let mut metadata = HashMap::new();
@@ -282,5 +284,44 @@ mod tests {
         assert_eq!(diagnostics.candidates, 1);
         assert_eq!(diagnostics.results_before_min_score, 1);
         assert_eq!(diagnostics.results_after_min_score, 1);
+    }
+
+    #[test]
+    fn test_search_with_diagnostics_when_min_score_removes_results() {
+        let mut database = Database::new(test_embedding_config());
+
+        let mut metadata = HashMap::new();
+        metadata.insert (
+            "subject".to_string(),
+            MetadataValue::String("DBMS".to_string())
+        );
+
+        database
+            .insert(Vector {
+                id: "chunk_1".to_string(),
+                values: vec![0.0, 1.0, 0.0],
+                metadata
+            })
+            .unwrap();
+
+        let embedder = TestEmbedder;
+        let retriever = Retriever::new(&database, &embedder);
+
+        let options = SearchOptions {
+            top_k : 10,
+            document_id: None,
+            min_score: Some(0.9),
+            filters: vec![]
+        };
+
+        let (results, diagnostics) = retriever
+            .search_with_diagnostics("database systems", options)
+            .unwrap();
+
+        println!("results: {:?}", results);
+        assert!(results.is_empty());
+        assert_eq!(diagnostics.candidates, 1);
+        assert_eq!(diagnostics.results_before_min_score, 1);
+        assert_eq!(diagnostics.results_after_min_score, 0);
     }
 }
