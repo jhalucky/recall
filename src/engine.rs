@@ -64,4 +64,21 @@ impl RecallEngine {
             embedder: Box::new(EmbeddingClient::new(embedding_url)),
         })
     }
+
+    pub fn add_document_pages(
+        &mut self,
+        document_id: &str,
+        pages: &[crate::document::DocumentPage],
+        metadata: &std::collections::HashMap<String, crate::metadata::MetadataValue>,
+        chunk_size: usize,
+    ) -> Result<usize, crate::error::RecallError> {
+        crate::pipeline::process_document_pages(
+            document_id,
+            pages,
+            metadata,
+            chunk_size,
+            self.embedder.as_ref(),
+            &mut self.database,
+        )
+    }
 }

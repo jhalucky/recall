@@ -4,8 +4,8 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 from fastapi import File, UploadFile
+from .pdf import extract_pages_from_pdf
 
-from .pdf import extract_text_from_pdf
 from .recall_client import RecallClient
 
 
@@ -48,21 +48,19 @@ async def add_pdf(file: UploadFile = File(...)):
         temp_path = temp.name
 
     try:
-        text = extract_text_from_pdf(temp_path)
+        pages = extract_pages_from_pdf(temp_path)
 
         document_id = Path(file.filename or "document.pdf").stem
 
-        result = recall.add_document(
+        return recall.add_document_pages(
             document_id=document_id,
-            text=text,
+            pages=pages,
             metadata={
                 "source": file.filename or "document.pdf",
                 "type": "pdf",
             },
             chunk_size=100,
         )
-
-        return result
 
     finally:
         Path(temp_path).unlink(missing_ok=True)

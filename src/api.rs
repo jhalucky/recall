@@ -11,7 +11,9 @@ use serde_json::Value;
 use crate::document::Document;
 use crate::engine::RecallEngine;
 use crate::metadata::MetadataValue;
-use crate::retrieval::{Retriever, SearchOptions};
+use crate::filter::MetadataFilter;
+use crate::retrieval::SearchOptions;
+use crate::document::DocumentPage;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -28,6 +30,21 @@ pub struct AddDocumentRequest {
 
     #[serde(default = "default_chunk_size")]
     pub chunk_size: usize,
+}
+
+#[derive(Debug, Deserialize)]
+struct DocumentPageRequest {
+    page: usize,
+    text: String,
+}
+
+#[derive(Debug, Deserialize)]
+struct AddPagesRequest {
+    id: String,
+    pages: Vec<DocumentPageRequest>,
+    metadata: HashMap<String, serde_json::Value>,
+    #[serde(default = "default_chunk_size")]
+    chunk_size: usize,
 }
 
 fn default_chunk_size() -> usize {
@@ -51,6 +68,7 @@ pub struct ListDocumentsResponse {
     pub documents: Vec<DocumentSummary>,
 }
 
+
 #[derive(Debug, Deserialize)]
 pub struct SearchRequest {
     pub query: String,
@@ -63,6 +81,15 @@ pub struct SearchRequest {
 
     #[serde(default)]
     pub min_score: Option<f32>,
+
+    #[serde(default)]
+    pub filters: Vec<MetadataFilterRequest>
+}
+
+#[derive(Debug, Deserialize)]
+pub struct MetadataFilterRequest {
+    pub key: String,
+    pub value: Value
 }
 
 fn default_top_k() -> usize {
@@ -80,6 +107,7 @@ pub fn create_router(state: AppState) -> Router {
         .route("/health", get(health))
         .route("/documents", get(list_documents).post(add_document))
         .route("/search",post(search))
+        .route("/documents/pages", post(add_document_pages))
         .with_state(state)
 }
 
@@ -92,14 +120,14 @@ async fn add_document(
     Json(request): Json<AddDocumentRequest>,
 ) -> Result<Json<AddDocumentResponse>, String> {
     let metadata = json_to_metadata(request.metadata)?;
-    
+    let document_id = request.id;
+
     let document = Document {
-        id: request.id,
+        id: document_id.clone(),
         text: request.text,
         metadata,
     };
 
-    let document_id = document.id.clone();
     let chunk_size = request.chunk_size;
 
     let chunks_indexed = tokio::task::spawn_blocking(move || {
@@ -136,6 +164,17 @@ async fn search(
     let document_id = request.document_id;
     let min_score = request.min_score;
 
+    let filters: Vec<MetadataFilter> = request
+    .filters
+    .into_iter()
+    .map(|filter| {
+        Ok(MetadataFilter::new(
+            filter.key,
+            json_to_metadata_value(filter.value)?,
+        ))
+    })
+    .collect::<Result<_, String>>()?;
+
     let results = tokio::task::spawn_blocking(move || {
         let engine = state
             .engine
@@ -146,7 +185,7 @@ async fn search(
             top_k,
             document_id,
             min_score,
-            filters: Vec::new(),
+            filters,
         };
 
         engine
@@ -210,4 +249,48 @@ fn json_to_metadata(
             Ok((key, json_to_metadata_value(value)?))
         })
         .collect()
+}
+
+async fn add_document_pages(
+    State(state): State<AppState>,
+    Json(request): Json<AddPagesRequest>,
+) -> Result<Json<AddDocumentResponse>, String> {
+    let metadata = json_to_metadata(request.metadata)?;
+
+    let pages: Vec<DocumentPage> = request
+        .pages
+        .into_iter()
+        .map(|page| DocumentPage {
+            page_number: page.page,
+            text: page.text,
+        })
+        .collect();
+
+    let document_id = request.id;
+    let chunk_size = request.chunk_size;
+    let document_id_for_engine = document_id.clone();
+
+    let chunks_indexed = tokio::task::spawn_blocking(move || {
+        let mut engine = state
+            .engine
+            .lock()
+            .map_err(|_| "Failed to lock RECALL engine".to_string())?;
+
+        let result = engine
+            .add_document_pages(&document_id_for_engine, &pages, &metadata, chunk_size)
+            .map_err(|error| error.to_string())?;
+
+        engine
+            .save("recall.json")
+            .map_err(|error| error.to_string())?;
+
+        Ok::<usize, String>(result)
+    })
+    .await
+    .map_err(|error| error.to_string())??;
+
+    Ok(Json(AddDocumentResponse {
+        document_id,
+        chunks_indexed,
+    }))
 }

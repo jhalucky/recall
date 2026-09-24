@@ -27,3 +27,27 @@ class RecallClient:
         response.raise_for_status()
 
         return response.json()
+
+    def add_document_pages(
+        self,
+        document_id: str,
+        pages: list[dict],
+        metadata: dict | None = None,
+        chunk_size: int = 100,
+    ) -> dict:
+        payload = {
+            "id": document_id,
+            "pages": pages,
+            "metadata": metadata or {},
+            "chunk_size": chunk_size,
+        }
+
+        response = httpx.post(
+            f"{self.base_url}/documents/pages",
+            json=payload,
+            timeout=120.0,
+        )
+
+        response.raise_for_status()
+
+        return response.json()
