@@ -6,6 +6,7 @@ use axum::{
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
+use serde_json::Value;
 
 use crate::document::Document;
 use crate::engine::RecallEngine;
@@ -23,7 +24,7 @@ pub struct AddDocumentRequest {
     pub text: String,
 
     #[serde(default)]
-    pub metadata: HashMap<String, MetadataValue>,
+    pub metadata: HashMap<String, Value>,
 
     #[serde(default = "default_chunk_size")]
     pub chunk_size: usize,
@@ -37,6 +38,17 @@ fn default_chunk_size() -> usize {
 pub struct AddDocumentResponse {
     pub document_id: String,
     pub chunks_indexed: usize,
+}
+
+#[derive(Debug, Serialize)]
+pub struct DocumentSummary {
+    pub document_id: String,
+    pub chunks: usize,
+}
+
+#[derive(Debug, Serialize)]
+pub struct ListDocumentsResponse {
+    pub documents: Vec<DocumentSummary>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -66,7 +78,7 @@ pub struct SearchResponse {
 pub fn create_router(state: AppState) -> Router {
     Router::new()
         .route("/health", get(health))
-        .route("/documents", post(add_document))
+        .route("/documents", get(list_documents).post(add_document))
         .route("/search",post(search))
         .with_state(state)
 }
@@ -79,10 +91,12 @@ async fn add_document(
     State(state): State<AppState>,
     Json(request): Json<AddDocumentRequest>,
 ) -> Result<Json<AddDocumentResponse>, String> {
+    let metadata = json_to_metadata(request.metadata)?;
+    
     let document = Document {
         id: request.id,
         text: request.text,
-        metadata: request.metadata,
+        metadata,
     };
 
     let document_id = document.id.clone();
@@ -143,4 +157,57 @@ async fn search(
     .map_err(|error| error.to_string())??;
 
     Ok(Json(SearchResponse { results }))
+}
+
+async fn list_documents(
+    State(state): State<AppState>,
+) -> Result<Json<ListDocumentsResponse>, String> {
+    let documents = tokio::task::spawn_blocking(move || {
+        let engine = state
+            .engine
+            .lock()
+            .map_err(|_| "Failed to lock RECALL engine".to_string())?;
+
+        Ok::<Vec<(String, usize)>, String>(engine.list_documents())
+    })
+    .await
+    .map_err(|error| error.to_string())??;
+
+    let documents = documents
+        .into_iter()
+        .map(|(document_id, chunks)| DocumentSummary {
+            document_id,
+            chunks,
+        })
+        .collect();
+
+    Ok(Json(ListDocumentsResponse { documents }))
+}
+
+fn json_to_metadata_value(value: Value) -> Result<MetadataValue, String> {
+    match value {
+        Value::String(value) => Ok(MetadataValue::String(value)),
+        Value::Number(value) => {
+            if let Some(integer) = value.as_i64() {
+                Ok(MetadataValue::Integer(integer))
+            } else if let Some(float) = value.as_f64() {
+                Ok(MetadataValue::Float(float))
+            } else {
+                Err("Unsupported number value".to_string())
+            }
+        }
+        Value::Bool(value) => Ok(MetadataValue::Boolean(value)),
+        _ => Err("Metadata values must be strings, numbers, or booleans".to_string()),
+    }
+}
+
+fn json_to_metadata(
+    metadata: HashMap<String, Value>,
+) -> Result<HashMap<String, MetadataValue>, String> {
+    metadata
+        .into_iter()
+        .map(|(key, value)| {
+            Ok((key, json_to_metadata_value(value)?))
+        })
+        .collect()
 }
