@@ -13,6 +13,7 @@ use recall::metadata::MetadataValue;
 use recall::pipeline;
 use recall::vector::Vector;
 use recall::api::create_router;
+use recall::RecallEngine;
 use recall::{Database, Retriever, SearchOptions};
 
 #[derive(Parser, Debug)]
@@ -277,20 +278,40 @@ async fn main() -> Result<(), RecallError> {
                 }
             }
         }
-
+        
         Commands::Serve { host, port } => {
-            let app = create_router();
+            let embedding_url = "http://127.0.0.1:8001".to_string();
 
-            let address: SocketAddr = format!("{}:{}",host,port)
+            let engine = if Path::new("recall.json").exists() {
+                RecallEngine::load("recall.json", embedding_url)?
+            } else {
+                RecallEngine::new(
+                    embedding_url,
+                    EmbeddingConfig {
+                        provider: "sentence-transformers".to_string(),
+                        model: "all-MiniLM-L6-v2".to_string(),
+                        dimension: 384,
+                        version: "1".to_string(),
+                    },
+                )
+            };
+
+            let state = recall::api::AppState {
+                engine: std::sync::Arc::new(std::sync::Mutex::new(engine)),
+            };
+
+            let app = create_router(state);
+
+            let address: SocketAddr = format!("{}:{}", host, port)
                 .parse()
                 .map_err(|error| {
                     RecallError::IoError(std::io::Error::new(
                         std::io::ErrorKind::InvalidInput,
-                        error
+                        error,
                     ))
                 })?;
 
-            println!("RECALL API listening on http://{}",port);
+            println!("RECALL API listening on http://{}", address);
 
             let listener = tokio::net::TcpListener::bind(address)
                 .await
@@ -299,7 +320,6 @@ async fn main() -> Result<(), RecallError> {
             axum::serve(listener, app)
                 .await
                 .map_err(RecallError::IoError)?;
-
         }
 
         Commands::Eval { queries, top_k } => {

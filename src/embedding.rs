@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+
 use crate::error::RecallError;
 
 #[derive(Serialize)]
@@ -12,7 +13,7 @@ struct EmbedResponse {
     embedding: Vec<f32>,
 }
 
-pub trait EmbeddingProvider {
+pub trait EmbeddingProvider: Send + Sync {
     fn embed(&self, text: &str) -> Result<Vec<f32>, RecallError>;
 }
 pub struct EmbeddingClient {
