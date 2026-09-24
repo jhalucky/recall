@@ -13,3 +13,5 @@ python_ml.txt
 rust_long.txt
 rust.txt
 database.txt
+
+app/.venv/
