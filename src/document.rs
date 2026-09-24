@@ -10,6 +10,12 @@ pub struct Document {
     pub metadata: HashMap<String, MetadataValue>,
 }
 
+#[derive(Debug, Clone)]
+pub struct DocumentPage {
+    pub page_number: usize,
+    pub text: String,
+}
+
 pub fn load_from_file(path: &str) -> Result<Document, std::io::Error> {
     let text = fs::read_to_string(path)?;
 

@@ -49,6 +49,72 @@ pub fn process_document(
     Ok(inserted)
 }
 
+pub fn process_document_pages(
+    document_id: &str,
+    pages: &[crate::document::DocumentPage],
+    metadata: &std::collections::HashMap<String, MetadataValue>,
+    chunk_size: usize,
+    embedder: &dyn EmbeddingProvider,
+    database: &mut Database,
+) -> Result<usize, RecallError> {
+    let mut inserted = 0;
+
+    for page in pages {
+        let mut page_metadata = metadata.clone();
+
+        page_metadata.insert(
+            "page".to_string(),
+            MetadataValue::Integer(page.page_number as i64),
+        );
+
+        let page_document = Document {
+            id: document_id.to_string(),
+            text: page.text.clone(),
+            metadata: page_metadata,
+        };
+
+        let chunks = chunk_document(&page_document, chunk_size, 1);
+
+        for chunk in chunks {
+            let embedding = embedder.embed(&chunk.text)?;
+
+            let mut vector_metadata = chunk.metadata.clone();
+
+            vector_metadata.insert(
+                "document_id".to_string(),
+                MetadataValue::String(document_id.to_string()),
+            );
+
+            vector_metadata.insert(
+                "chunk_index".to_string(),
+                MetadataValue::Integer(chunk.chunk_index as i64),
+            );
+
+            vector_metadata.insert(
+                "text".to_string(),
+                MetadataValue::String(chunk.text.clone()),
+            );
+
+            let vector = Vector {
+                id: format!(
+                    "{}_page_{}_chunk_{}",
+                    document_id,
+                    page.page_number,
+                    chunk.chunk_index
+                ),
+                values: embedding,
+                metadata: vector_metadata,
+            };
+
+            database.upsert(vector)?;
+
+            inserted += 1;
+        }
+    }
+
+    Ok(inserted)
+}
+
 #[cfg(test)]
 
 mod tests {
