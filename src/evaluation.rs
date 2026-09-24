@@ -4,11 +4,22 @@ use std::fs;
 use crate::database::Database;
 use crate::embedding::EmbeddingProvider;
 use crate::error::RecallError;
+use crate::filter::MetadataFilter;
+use crate::metadata::MetadataValue;
 
 #[derive(Debug, Deserialize)]
 pub struct EvaluationQuery {
     pub query: String,
     pub expected_documents: Vec<String>,
+
+    #[serde(default)]
+    pub filters: Vec<EvaluationFilter>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct EvaluationFilter {
+    pub key: String,
+    pub value: MetadataValue,
 }
 
 pub fn load_queries(path: &str) -> Result<Vec<EvaluationQuery>, RecallError> {
@@ -31,7 +42,22 @@ pub fn evaluate_detailed(
     for (index, evaluation_query) in queries.iter().enumerate() {
         let query_vector = embedder.embed(&evaluation_query.query)?;
 
-        let results = database.search(&query_vector, top_k)?;
+        let filters: Vec<MetadataFilter> = evaluation_query
+            .filters
+            .iter()
+            .map(|filter| {
+                MetadataFilter::new(
+                    filter.key.clone(),
+                    filter.value.clone(),
+                )
+            })
+            .collect();
+
+        let results = if filters.is_empty() {
+            database.search(&query_vector, top_k)?
+        } else {
+            database.search_with_filters(&query_vector, top_k, &filters)?
+        };
 
         let top_1_match = results
             .first()

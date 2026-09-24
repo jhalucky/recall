@@ -1,0 +1,26 @@
+[
+  {
+    "query": "What does the company do?",
+    "expected_documents": ["catalogue"],
+    "filters": [
+      {
+        "key": "source",
+        "value": {
+          "String": "catalogue.pdf"
+        }
+      }
+    ]
+  },
+  {
+    "query": "What services does the company provide?",
+    "expected_documents": ["catalogue"],
+    "filters": [
+      {
+        "key": "source",
+        "value": {
+          "String": "catalogue.pdf"
+        }
+      }
+    ]
+  }
+]

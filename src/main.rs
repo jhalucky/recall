@@ -1,4 +1,3 @@
-use clap::builder::Str;
 use clap::{Parser, Subcommand};
 use std::collections::HashMap;
 use std::path::Path;
@@ -330,15 +329,29 @@ async fn main() -> Result<(), RecallError> {
                 return Ok(());
             }
 
-            let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8001".to_string());
-
-            let (top_1_correct, top_k_correct, mrr) =
-                evaluation::evaluate_detailed(&database, &embedder, &evaluation_queries, top_k)?;
-
             let total = evaluation_queries.len();
 
-            let top_1_accuracy = (top_1_correct as f32 / total as f32) * 100.0;
+            let result = tokio::task::spawn_blocking(move || {
+                let embedder =
+                    embedding::EmbeddingClient::new("http://127.0.0.1:8001".to_string());
 
+                evaluation::evaluate_detailed(
+                    &database,
+                    &embedder,
+                    &evaluation_queries,
+                    top_k,
+                )
+            })
+            .await
+            .map_err(|error| RecallError::IoError(
+                std::io::Error::other(error.to_string())
+            ))??;
+
+            let (top_1_correct, top_k_correct, mrr) = result;
+
+            // let total = evaluation_queries.len();
+
+            let top_1_accuracy = (top_1_correct as f32 / total as f32) * 100.0;
             let top_k_accuracy = (top_k_correct as f32 / total as f32) * 100.0;
 
             println!();
