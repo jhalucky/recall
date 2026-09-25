@@ -1,19 +1,19 @@
 use axum::{
-    extract::State,
-    routing::{get, post},
     Json, Router,
+    extract::{Path, State},
+    routing::{delete, get, post},
 };
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
-use serde_json::Value;
 
 use crate::document::Document;
-use crate::engine::RecallEngine;
-use crate::metadata::MetadataValue;
-use crate::filter::MetadataFilter;
-use crate::retrieval::SearchOptions;
 use crate::document::DocumentPage;
+use crate::engine::RecallEngine;
+use crate::filter::MetadataFilter;
+use crate::metadata::MetadataValue;
+use crate::retrieval::SearchOptions;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -68,7 +68,6 @@ pub struct ListDocumentsResponse {
     pub documents: Vec<DocumentSummary>,
 }
 
-
 #[derive(Debug, Deserialize)]
 pub struct SearchRequest {
     pub query: String,
@@ -83,13 +82,13 @@ pub struct SearchRequest {
     pub min_score: Option<f32>,
 
     #[serde(default)]
-    pub filters: Vec<MetadataFilterRequest>
+    pub filters: Vec<MetadataFilterRequest>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct MetadataFilterRequest {
     pub key: String,
-    pub value: Value
+    pub value: Value,
 }
 
 fn default_top_k() -> usize {
@@ -101,12 +100,18 @@ pub struct SearchResponse {
     pub results: Vec<crate::search_result::SearchResult>,
 }
 
+#[derive(Debug, Serialize)]
+pub struct DeleteDocumentResponse {
+    pub document_id: String,
+    pub chunks_deleted: usize,
+}
 
 pub fn create_router(state: AppState) -> Router {
     Router::new()
         .route("/health", get(health))
         .route("/documents", get(list_documents).post(add_document))
-        .route("/search",post(search))
+        .route("/documents/{document_id}", delete(delete_document))
+        .route("/search", post(search))
         .route("/documents/pages", post(add_document_pages))
         .with_state(state)
 }
@@ -165,15 +170,15 @@ async fn search(
     let min_score = request.min_score;
 
     let filters: Vec<MetadataFilter> = request
-    .filters
-    .into_iter()
-    .map(|filter| {
-        Ok(MetadataFilter::new(
-            filter.key,
-            json_to_metadata_value(filter.value)?,
-        ))
-    })
-    .collect::<Result<_, String>>()?;
+        .filters
+        .into_iter()
+        .map(|filter| {
+            Ok(MetadataFilter::new(
+                filter.key,
+                json_to_metadata_value(filter.value)?,
+            ))
+        })
+        .collect::<Result<_, String>>()?;
 
     let results = tokio::task::spawn_blocking(move || {
         let engine = state
@@ -245,9 +250,7 @@ fn json_to_metadata(
 ) -> Result<HashMap<String, MetadataValue>, String> {
     metadata
         .into_iter()
-        .map(|(key, value)| {
-            Ok((key, json_to_metadata_value(value)?))
-        })
+        .map(|(key, value)| Ok((key, json_to_metadata_value(value)?)))
         .collect()
 }
 
@@ -292,5 +295,34 @@ async fn add_document_pages(
     Ok(Json(AddDocumentResponse {
         document_id,
         chunks_indexed,
+    }))
+}
+
+async fn delete_document(
+    State(state): State<AppState>,
+    Path(document_id): Path<String>,
+) -> Result<Json<DeleteDocumentResponse>, String> {
+    let document_id_for_engine = document_id.clone();
+
+    let chunks_deleted = tokio::task::spawn_blocking(move || {
+        let mut engine = state
+            .engine
+            .lock()
+            .map_err(|_| "Failed to lock RECALL engine".to_string())?;
+
+        let chunks_deleted = engine.delete_document(&document_id_for_engine);
+
+        engine
+            .save("recall.json")
+            .map_err(|error| error.to_string())?;
+
+        Ok::<usize, String>(chunks_deleted)
+    })
+    .await
+    .map_err(|error| error.to_string())??;
+
+    Ok(Json(DeleteDocumentResponse {
+        document_id,
+        chunks_deleted,
     }))
 }

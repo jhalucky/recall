@@ -1,18 +1,18 @@
 use clap::{Parser, Subcommand};
 use std::collections::HashMap;
+use std::net::SocketAddr;
 use std::path::Path;
 use std::println;
-use std::net::SocketAddr;
 
 use recall::EmbeddingConfig;
+use recall::RecallEngine;
+use recall::api::create_router;
 use recall::embedding;
 use recall::error::RecallError;
 use recall::evaluation;
 use recall::metadata::MetadataValue;
 use recall::pipeline;
 use recall::vector::Vector;
-use recall::api::create_router;
-use recall::RecallEngine;
 use recall::{Database, Retriever, SearchOptions};
 
 #[derive(Parser, Debug)]
@@ -94,9 +94,9 @@ enum Commands {
 
         #[arg(long, default_value_t = 3000)]
         port: u16,
-    }
+    },
 }
-#[tokio::main] 
+#[tokio::main]
 async fn main() -> Result<(), RecallError> {
     let mut database;
 
@@ -277,7 +277,7 @@ async fn main() -> Result<(), RecallError> {
                 }
             }
         }
-        
+
         Commands::Serve { host, port } => {
             let embedding_url = "http://127.0.0.1:8001".to_string();
 
@@ -301,14 +301,9 @@ async fn main() -> Result<(), RecallError> {
 
             let app = create_router(state);
 
-            let address: SocketAddr = format!("{}:{}", host, port)
-                .parse()
-                .map_err(|error| {
-                    RecallError::IoError(std::io::Error::new(
-                        std::io::ErrorKind::InvalidInput,
-                        error,
-                    ))
-                })?;
+            let address: SocketAddr = format!("{}:{}", host, port).parse().map_err(|error| {
+                RecallError::IoError(std::io::Error::new(std::io::ErrorKind::InvalidInput, error))
+            })?;
 
             println!("RECALL API listening on http://{}", address);
 
@@ -332,20 +327,12 @@ async fn main() -> Result<(), RecallError> {
             let total = evaluation_queries.len();
 
             let result = tokio::task::spawn_blocking(move || {
-                let embedder =
-                    embedding::EmbeddingClient::new("http://127.0.0.1:8001".to_string());
+                let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8001".to_string());
 
-                evaluation::evaluate_detailed(
-                    &database,
-                    &embedder,
-                    &evaluation_queries,
-                    top_k,
-                )
+                evaluation::evaluate_detailed(&database, &embedder, &evaluation_queries, top_k)
             })
             .await
-            .map_err(|error| RecallError::IoError(
-                std::io::Error::other(error.to_string())
-            ))??;
+            .map_err(|error| RecallError::IoError(std::io::Error::other(error.to_string())))??;
 
             let (top_1_correct, top_k_correct, mrr) = result;
 

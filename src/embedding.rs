@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 
-
 use crate::error::RecallError;
 
 #[derive(Serialize)]

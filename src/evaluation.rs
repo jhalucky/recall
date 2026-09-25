@@ -45,12 +45,7 @@ pub fn evaluate_detailed(
         let filters: Vec<MetadataFilter> = evaluation_query
             .filters
             .iter()
-            .map(|filter| {
-                MetadataFilter::new(
-                    filter.key.clone(),
-                    filter.value.clone(),
-                )
-            })
+            .map(|filter| MetadataFilter::new(filter.key.clone(), filter.value.clone()))
             .collect();
 
         let results = if filters.is_empty() {

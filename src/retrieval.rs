@@ -1,10 +1,10 @@
 use crate::database::Database;
+use crate::diagnostics::RetrievalDiagnostics;
 use crate::embedding::EmbeddingProvider;
 use crate::error::RecallError;
 use crate::filter::MetadataFilter;
 use crate::metadata::MetadataValue;
 use crate::search_result::SearchResult;
-use crate::diagnostics::RetrievalDiagnostics;
 
 #[derive(Debug, Clone, Default)]
 pub struct SearchOptions {
@@ -62,7 +62,7 @@ impl<'a> Retriever<'a> {
     pub fn search_with_diagnostics(
         &self,
         query: &str,
-        options: SearchOptions
+        options: SearchOptions,
     ) -> Result<(Vec<SearchResult>, RetrievalDiagnostics), RecallError> {
         let query_vector = self.embedder.embed(query)?;
 
@@ -71,7 +71,7 @@ impl<'a> Retriever<'a> {
         if let Some(document_id) = options.document_id.as_ref() {
             filters.push(MetadataFilter::new(
                 "document_id".to_string(),
-                MetadataValue::String(document_id.clone())
+                MetadataValue::String(document_id.clone()),
             ));
         }
 
@@ -100,7 +100,7 @@ impl<'a> Retriever<'a> {
         let diagnostics = RetrievalDiagnostics {
             candidates: candidates_count,
             results_before_min_score,
-            results_after_min_score
+            results_after_min_score,
         };
 
         Ok((results, diagnostics))
@@ -111,7 +111,7 @@ impl<'a> Retriever<'a> {
 mod tests {
     use serde_json::error::Category::Data;
 
-use super::*;
+    use super::*;
     use crate::{diagnostics, metadata, vector::Vector};
     use std::{assert_eq, collections::HashMap, vec};
 
@@ -254,14 +254,14 @@ use super::*;
         let mut metadata = HashMap::new();
         metadata.insert(
             "subject".to_string(),
-            MetadataValue::String("DBMS".to_string())
+            MetadataValue::String("DBMS".to_string()),
         );
 
         database
             .insert(Vector {
                 id: "chunk_1".to_string(),
                 values: vec![1.0, 0.0, 0.0],
-                metadata
+                metadata,
             })
             .unwrap();
 
@@ -272,13 +272,12 @@ use super::*;
             top_k: 10,
             document_id: None,
             min_score: None,
-            filters: vec![]
+            filters: vec![],
         };
 
         let (results, diagnostics) = retriever
             .search_with_diagnostics("database systems", options)
             .unwrap();
-
 
         assert_eq!(results.len(), 1);
         assert_eq!(diagnostics.candidates, 1);
@@ -291,16 +290,16 @@ use super::*;
         let mut database = Database::new(test_embedding_config());
 
         let mut metadata = HashMap::new();
-        metadata.insert (
+        metadata.insert(
             "subject".to_string(),
-            MetadataValue::String("DBMS".to_string())
+            MetadataValue::String("DBMS".to_string()),
         );
 
         database
             .insert(Vector {
                 id: "chunk_1".to_string(),
                 values: vec![0.0, 1.0, 0.0],
-                metadata
+                metadata,
             })
             .unwrap();
 
@@ -308,10 +307,10 @@ use super::*;
         let retriever = Retriever::new(&database, &embedder);
 
         let options = SearchOptions {
-            top_k : 10,
+            top_k: 10,
             document_id: None,
             min_score: Some(0.9),
-            filters: vec![]
+            filters: vec![],
         };
 
         let (results, diagnostics) = retriever

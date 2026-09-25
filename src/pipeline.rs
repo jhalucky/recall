@@ -98,9 +98,7 @@ pub fn process_document_pages(
             let vector = Vector {
                 id: format!(
                     "{}_page_{}_chunk_{}",
-                    document_id,
-                    page.page_number,
-                    chunk.chunk_index
+                    document_id, page.page_number, chunk.chunk_index
                 ),
                 values: embedding,
                 metadata: vector_metadata,
