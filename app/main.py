@@ -1,5 +1,5 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, Field
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
@@ -17,8 +17,21 @@ recall = RecallClient()
 class DocumentRequest(BaseModel):
     id: str
     text: str
-    metadata: dict = {}
-    chunk_size: int = 100
+    metadata: dict = Field(default_factory=dict)
+    chunk_size: int = Field(default=100, ge=1)
+
+
+class MetadataFilterRequest(BaseModel):
+    key: str
+    value: str | int | float | bool
+
+
+class SearchRequest(BaseModel):
+    query: str
+    top_k: int = 3
+    document_id: str | None = None
+    min_score: float | None = None
+    ilters: list[MetadataFilterRequest] = Field(default_factory=list)
 
 
 @app.get("/health")
@@ -64,3 +77,26 @@ async def add_pdf(file: UploadFile = File(...)):
 
     finally:
         Path(temp_path).unlink(missing_ok=True)
+
+@app.get("/documents")
+def list_documents():
+    return recall.list_documents()
+
+
+@app.post("/search")
+def search(request: SearchRequest):
+    return recall.search(
+        query=request.query,
+        top_k=request.top_k,
+        document_id=request.document_id,
+        min_score=request.min_score,
+        filters=[
+            {"key": filter.key, "value": filter.value}
+            for filter in request.filters
+        ],
+    )
+
+
+@app.delete("/documents/{document_id}")
+def delete_document(document_id: str):
+    return recall.delete_document(document_id)

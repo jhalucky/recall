@@ -51,3 +51,51 @@ class RecallClient:
         response.raise_for_status()
 
         return response.json()
+
+    def list_documents(self) -> dict:
+        response = httpx.get(
+            f"{self.base_url}/documents",
+            timeout=30.0,
+        )
+
+        response.raise_for_status()
+
+        return response.json()
+
+
+    def search(
+        self,
+        query: str,
+        top_k: int = 3,
+        document_id: str | None = None,
+        min_score: float | None = None,
+        filters: list[dict] | None = None,
+    ) -> dict:
+        payload = {
+            "query": query,
+            "top_k": top_k,
+            "document_id": document_id,
+            "min_score": min_score,
+            "filters": filters or [],
+        }
+
+        response = httpx.post(
+            f"{self.base_url}/search",
+            json=payload,
+            timeout=120.0,
+        )
+
+        response.raise_for_status()
+
+        return response.json()
+
+
+    def delete_document(self, document_id: str) -> dict:
+        response = httpx.delete(
+            f"{self.base_url}/documents/{document_id}",
+            timeout=30.0,
+        )
+
+        response.raise_for_status()
+
+        return response.json()

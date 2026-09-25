@@ -326,3 +326,21 @@ async fn delete_document(
         chunks_deleted,
     }))
 }
+
+fn metadata_value_to_json(value: &MetadataValue) -> Value {
+    match value {
+        MetadataValue::String(value) => Value::String(value.clone()),
+        MetadataValue::Integer(value) => Value::Number((*value).into()),
+        MetadataValue::Float(value) => serde_json::Number::from_f64(*value)
+            .map(Value::Number)
+            .unwrap_or(Value::Null),
+        MetadataValue::Boolean(value) => Value::Bool(*value),
+    }
+}
+
+fn metadata_to_json(metadata: &HashMap<String, MetadataValue>) -> HashMap<String, Value> {
+    metadata
+        .iter()
+        .map(|(key, value)| (key.clone(), metadata_value_to_json(value)))
+        .collect()
+}
