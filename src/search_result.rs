@@ -12,3 +12,5 @@ pub struct SearchResult {
     pub score: f32,
     pub metadata: HashMap<String, MetadataValue>,
 }
+
+
