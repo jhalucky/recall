@@ -31,7 +31,7 @@ class SearchRequest(BaseModel):
     top_k: int = 3
     document_id: str | None = None
     min_score: float | None = None
-    ilters: list[MetadataFilterRequest] = Field(default_factory=list)
+    filters: list[MetadataFilterRequest] = Field(default_factory=list)
 
 
 @app.get("/health")
