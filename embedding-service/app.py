@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI
 from pydantic import BaseModel
 
@@ -6,11 +8,19 @@ from model import Embedder
 app = FastAPI()
 embedder = Embedder()
 
+
 class EmbedRequest(BaseModel):
     text: str
 
+
 class EmbedResponse(BaseModel):
     embedding: list[float]
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
 
 @app.post("/embed", response_model=EmbedResponse)
 def embed(request: EmbedRequest):
@@ -22,4 +32,6 @@ def embed(request: EmbedRequest):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="127.0.0.1",port=8001)
+    port = int(os.environ.get("PORT", "8001"))
+
+    uvicorn.run(app, host="0.0.0.0", port=port)
