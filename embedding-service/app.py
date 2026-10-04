@@ -1,12 +1,22 @@
 import os
+import threading
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from pydantic import BaseModel
 
 from model import Embedder
 
-app = FastAPI()
 embedder = Embedder()
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    threading.Thread(target=embedder._load_model, daemon=True).start()
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 
 
 class EmbedRequest(BaseModel):
@@ -17,6 +27,7 @@ class EmbedResponse(BaseModel):
     embedding: list[float]
 
 
+@app.get("/")
 @app.get("/health")
 def health():
     return {"status": "ok"}
