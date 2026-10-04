@@ -2,10 +2,7 @@ use clap::{Parser, Subcommand};
 use std::collections::HashMap;
 use std::net::SocketAddr;
 use std::path::Path;
-use std::println;
 
-use recall::EmbeddingConfig;
-use recall::RecallEngine;
 use recall::api::create_router;
 use recall::embedding;
 use recall::error::RecallError;
@@ -13,6 +10,8 @@ use recall::evaluation;
 use recall::metadata::MetadataValue;
 use recall::pipeline;
 use recall::vector::Vector;
+use recall::EmbeddingConfig;
+use recall::RecallEngine;
 use recall::{Database, Retriever, SearchOptions};
 
 #[derive(Parser, Debug)]
@@ -96,13 +95,27 @@ enum Commands {
         port: u16,
     },
 }
+
+fn embedding_url() -> String {
+    std::env::var("RECALL_EMBEDDING_URL")
+        .unwrap_or_else(|_| "http://127.0.0.1:8001".to_string())
+        .trim_end_matches('/')
+        .to_string()
+}
+
+fn data_path() -> String {
+    std::env::var("RECALL_DATA_PATH").unwrap_or_else(|_| "recall.json".to_string())
+}
+
 #[tokio::main]
 async fn main() -> Result<(), RecallError> {
     let mut database;
 
+    let database_path = data_path();
+
     // Load existing database or create a new one.
-    if Path::new("recall.json").exists() {
-        database = Database::load("recall.json")?;
+    if Path::new(&database_path).exists() {
+        database = Database::load(&database_path)?;
     } else {
         database = Database::new(EmbeddingConfig {
             provider: "sentence-transformers".to_string(),
@@ -158,7 +171,7 @@ async fn main() -> Result<(), RecallError> {
             };
 
             database.insert(vector)?;
-            database.save("recall.json")?;
+            database.save(&database_path)?;
 
             println!("Vector inserted successfully.");
         }
@@ -177,7 +190,7 @@ async fn main() -> Result<(), RecallError> {
 
         Commands::Delete { id } => match database.delete(&id) {
             Some(vector) => {
-                database.save("recall.json")?;
+                database.save(&database_path)?;
 
                 println!("Deleted vector: {}", vector.id);
             }
@@ -188,13 +201,15 @@ async fn main() -> Result<(), RecallError> {
         },
 
         Commands::DeleteDocument { document_id } => {
-            let deleted = database
-                .delete_by_metadata("document_id", &MetadataValue::String(document_id.clone()));
+            let deleted = database.delete_by_metadata(
+                "document_id",
+                &MetadataValue::String(document_id.clone()),
+            );
 
             if deleted == 0 {
                 println!("Document not found: {}", document_id);
             } else {
-                database.save("recall.json")?;
+                database.save(&database_path)?;
 
                 println!(
                     "Deleted document '{}' and {} chunk(s).",
@@ -225,7 +240,7 @@ async fn main() -> Result<(), RecallError> {
             };
 
             database.upsert(vector)?;
-            database.save("recall.json")?;
+            database.save(&database_path)?;
 
             println!("Vector upserted successfully!");
         }
@@ -233,11 +248,11 @@ async fn main() -> Result<(), RecallError> {
         Commands::AddDocument { path } => {
             let document = recall::load_from_file(&path)?;
 
-            let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8001".to_string());
+            let embedder = embedding::EmbeddingClient::new(embedding_url());
 
             let inserted = pipeline::process_document(&document, 100, &embedder, &mut database)?;
 
-            database.save("recall.json")?;
+            database.save(&database_path)?;
 
             println!(
                 "Document '{}' added successfully. {} chunk(s) indexed.",
@@ -250,7 +265,7 @@ async fn main() -> Result<(), RecallError> {
             top_k,
             document,
         } => {
-            let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8001".to_string());
+            let embedder = embedding::EmbeddingClient::new(embedding_url());
 
             let retriever = Retriever::new(&database, &embedder);
 
@@ -279,13 +294,13 @@ async fn main() -> Result<(), RecallError> {
         }
 
         Commands::Serve { host, port } => {
-            let embedding_url = "http://127.0.0.1:8001".to_string();
+            let embedding_service_url = embedding_url();
 
-            let engine = if Path::new("recall.json").exists() {
-                RecallEngine::load("recall.json", embedding_url)?
+            let engine = if Path::new(&database_path).exists() {
+                RecallEngine::load(&database_path, embedding_service_url)?
             } else {
                 RecallEngine::new(
-                    embedding_url,
+                    embedding_service_url,
                     EmbeddingConfig {
                         provider: "sentence-transformers".to_string(),
                         model: "all-MiniLM-L6-v2".to_string(),
@@ -327,7 +342,7 @@ async fn main() -> Result<(), RecallError> {
             let total = evaluation_queries.len();
 
             let result = tokio::task::spawn_blocking(move || {
-                let embedder = embedding::EmbeddingClient::new("http://127.0.0.1:8001".to_string());
+                let embedder = embedding::EmbeddingClient::new(embedding_url());
 
                 evaluation::evaluate_detailed(&database, &embedder, &evaluation_queries, top_k)
             })
@@ -335,8 +350,6 @@ async fn main() -> Result<(), RecallError> {
             .map_err(|error| RecallError::IoError(std::io::Error::other(error.to_string())))??;
 
             let (top_1_correct, top_k_correct, mrr) = result;
-
-            // let total = evaluation_queries.len();
 
             let top_1_accuracy = (top_1_correct as f32 / total as f32) * 100.0;
             let top_k_accuracy = (top_k_correct as f32 / total as f32) * 100.0;
