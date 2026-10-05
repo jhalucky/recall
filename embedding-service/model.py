@@ -4,13 +4,13 @@ class Embedder:
 
     def _load_model(self):
         if self.model is None:
-            from sentence_transformers import SentenceTransformer
+            from fastembed import TextEmbedding
 
-            self.model = SentenceTransformer("all-MiniLM-L6-v2", device="cpu")
+            self.model = TextEmbedding(
+                model_name="sentence-transformers/all-MiniLM-L6-v2"
+            )
 
     def embed(self, text: str) -> list[float]:
         self._load_model()
-
-        embedding = self.model.encode(text)
-
+        embedding = next(self.model.embed(text))
         return embedding.tolist()
